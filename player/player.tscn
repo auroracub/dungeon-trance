@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://hf7tlhu5yxck"]
+
+[ext_resource type="Script" uid="uid://b61xgyq1blshp" path="res://player/player.gd" id="1_4flbx"]
+[ext_resource type="Texture2D" uid="uid://crouecd42krxy" path="res://player/player.png" id="2_onrkg"]
+
+[node name="Player" type="Node3D" unique_id=1455120242]
+script = ExtResource("1_4flbx")
+
+[node name="Head" type="Node3D" parent="." unique_id=1357056651]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.875, -0.2)
+
+[node name="Camera3D" type="Camera3D" parent="Head" unique_id=154479637]
+cull_mask = 1048573
+
+[node name="WorldMesh (Layer2)" type="Node3D" parent="." unique_id=905989414]
+
+[node name="Sprite3D" type="Sprite3D" parent="WorldMesh (Layer2)" unique_id=2038189852]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+layers = 2
+pixel_size = 0.0078
+texture = ExtResource("2_onrkg")

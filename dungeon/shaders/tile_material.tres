@@ -1,0 +1,12 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://k3ae0xoylusf"]
+
+[ext_resource type="Shader" uid="uid://bea0mefrcvh1p" path="res://dungeon/shaders/tile_shader.gdshader" id="1_y4tu0"]
+[ext_resource type="Texture2D" uid="uid://rhsusccidolj" path="res://dungeon/textures/tile_texture.png" id="2_eqwfr"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_y4tu0")
+shader_parameter/tile_mask_texture = ExtResource("2_eqwfr")
+shader_parameter/scale = Vector2(15, 15)
+shader_parameter/edge_color = Color(0, 0, 0, 1)
+shader_parameter/tile_color = Color(1, 1, 1, 1)
