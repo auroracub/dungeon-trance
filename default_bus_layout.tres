@@ -1,0 +1,53 @@
+[gd_resource type="AudioBusLayout" format=3 uid="uid://ckyrn7rcm4gya"]
+
+[sub_resource type="AudioEffectReverb" id="AudioEffectReverb_j3pel"]
+resource_name = "Reverb"
+predelay_msec = 50.0
+predelay_feedback = 0.25
+room_size = 0.65
+spread = 0.5
+hipass = 0.3
+dry = 0.8
+wet = 0.2
+
+[sub_resource type="AudioEffectNotchFilter" id="AudioEffectNotchFilter_g28q7"]
+resource_name = "NotchFilter"
+cutoff_hz = 1000.0
+resonance = 0.25
+
+[sub_resource type="AudioEffectPhaser" id="AudioEffectPhaser_j3pel"]
+resource_name = "Phaser"
+range_min_hz = 200.0
+range_max_hz = 2000.0
+rate_hz = 0.05
+feedback = 0.5
+depth = 0.5
+
+[sub_resource type="AudioEffectLowPassFilter" id="AudioEffectLowPassFilter_j3pel"]
+resource_name = "LowPassFilter"
+cutoff_hz = 5000.0
+db = 3
+
+[sub_resource type="AudioEffectChorus" id="AudioEffectChorus_j3pel"]
+resource_name = "Chorus"
+dry = 0.8
+wet = 0.2
+
+[resource]
+bus/0/bypass_fx = true
+bus/1/name = &"Music"
+bus/1/solo = false
+bus/1/mute = false
+bus/1/bypass_fx = false
+bus/1/volume_db = 0.0
+bus/1/send = &"Master"
+bus/1/effect/0/effect = SubResource("AudioEffectReverb_j3pel")
+bus/1/effect/0/enabled = true
+bus/1/effect/1/effect = SubResource("AudioEffectNotchFilter_g28q7")
+bus/1/effect/1/enabled = true
+bus/1/effect/2/effect = SubResource("AudioEffectPhaser_j3pel")
+bus/1/effect/2/enabled = true
+bus/1/effect/3/effect = SubResource("AudioEffectLowPassFilter_j3pel")
+bus/1/effect/3/enabled = true
+bus/1/effect/4/effect = SubResource("AudioEffectChorus_j3pel")
+bus/1/effect/4/enabled = true

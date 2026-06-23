@@ -1,10 +1,15 @@
 [gd_scene format=3 uid="uid://c4mbqg3ggydpb"]
 
 [ext_resource type="PackedScene" uid="uid://hf7tlhu5yxck" path="res://player/player.tscn" id="1_2uogr"]
+[ext_resource type="Script" uid="uid://bj8jw1sydlbif" path="res://dungeon/dungeon.gd" id="1_cy6l0"]
 [ext_resource type="Material" uid="uid://k3ae0xoylusf" path="res://dungeon/shaders/tile_material.tres" id="2_cy6l0"]
 [ext_resource type="Texture2D" uid="uid://ciqmjaxip0vu" path="res://dungeon/textures/chest_texture.png" id="3_xtpqo"]
 [ext_resource type="Texture2D" uid="uid://dm857522wfrg" path="res://dungeon/textures/ghost_1.png" id="4_p4tjh"]
 [ext_resource type="Texture2D" uid="uid://cyag1ictl6512" path="res://dungeon/textures/ghost_2.png" id="5_vx3dd"]
+[ext_resource type="AudioStream" uid="uid://xy0ovxr22koe" path="res://dungeon/sfx/kick_3.mp3" id="7_xtpqo"]
+[ext_resource type="AudioStream" uid="uid://gq3yr3wgwmnp" path="res://dungeon/sfx/kick_1.mp3" id="8_vx3dd"]
+[ext_resource type="AudioStream" uid="uid://dkp5ge2ws0fp3" path="res://dungeon/sfx/pad_1.mp3" id="9_4irer"]
+[ext_resource type="AudioStream" uid="uid://47cq1icy7v4d" path="res://dungeon/sfx/perc_2.mp3" id="9_tth0x"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_tjq72"]
 size = Vector2(15, 15)
@@ -19,36 +24,68 @@ glow_intensity = 1.5
 glow_bloom = 0.5
 
 [node name="DungeonScene" type="Node3D" unique_id=1156125841]
+script = ExtResource("1_cy6l0")
 
-[node name="Player" parent="." unique_id=1455120242 instance=ExtResource("1_2uogr")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+[node name="Rooms" type="Node3D" parent="." unique_id=1955545466]
 
-[node name="Floor" type="MeshInstance3D" parent="." unique_id=387157825]
+[node name="Floor" type="MeshInstance3D" parent="Rooms" unique_id=387157825]
 material_override = ExtResource("2_cy6l0")
 mesh = SubResource("PlaneMesh_tjq72")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Floor" unique_id=1733836102]
+[node name="StaticBody3D" type="StaticBody3D" parent="Rooms/Floor" unique_id=1733836102]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor/StaticBody3D" unique_id=1815459880]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rooms/Floor/StaticBody3D" unique_id=1815459880]
 shape = SubResource("BoxShape3D_upd8q")
 
-[node name="Chest" type="Sprite3D" parent="." unique_id=1418952021]
+[node name="Entities" type="Node3D" parent="." unique_id=2083963544]
+
+[node name="Player" parent="Entities" unique_id=1455120242 instance=ExtResource("1_2uogr")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="Chest" type="Sprite3D" parent="Entities" unique_id=1418952021]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.5, 3)
 pixel_size = 0.0078
 billboard = 2
 texture = ExtResource("3_xtpqo")
 
-[node name="Ghost1" type="Sprite3D" parent="." unique_id=310289695]
+[node name="Ghost1" type="Sprite3D" parent="Entities" unique_id=310289695]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 1, 2)
 pixel_size = 0.0078
 billboard = 2
 texture = ExtResource("4_p4tjh")
 
-[node name="Ghost2" type="Sprite3D" parent="." unique_id=1499002351]
+[node name="Ghost2" type="Sprite3D" parent="Entities" unique_id=1499002351]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 1, 4)
 pixel_size = 0.0078
 billboard = 2
 texture = ExtResource("5_vx3dd")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1905369222]
+[node name="Global" type="Node3D" parent="." unique_id=1453770596]
+
+[node name="GroovePlayer" type="AudioStreamPlayer" parent="Global" unique_id=80176443]
+unique_name_in_owner = true
+stream = ExtResource("7_xtpqo")
+bus = &"Music"
+
+[node name="DownBeatPlayer" type="AudioStreamPlayer" parent="Global" unique_id=160529021]
+unique_name_in_owner = true
+stream = ExtResource("8_vx3dd")
+volume_db = -2.0
+bus = &"Music"
+
+[node name="UpBeatPlayer" type="AudioStreamPlayer" parent="Global" unique_id=2031831688]
+unique_name_in_owner = true
+stream = ExtResource("9_tth0x")
+volume_db = -4.0
+bus = &"Music"
+
+[node name="BackgroundPlayer" type="AudioStreamPlayer" parent="Global" unique_id=1253597089]
+unique_name_in_owner = true
+stream = ExtResource("9_4irer")
+volume_db = -12.0
+autoplay = true
+bus = &"Music"
+parameters/looping = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Global" unique_id=1905369222]
 environment = SubResource("Environment_ce1tf")
