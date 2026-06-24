@@ -1,6 +1,12 @@
 
 class_name Player extends Node3D
 
+## references
+
+@onready var dungeon := owner as Dungeon
+@onready var center := %Center
+
+
 ## moving
 
 enum SideMoveBehavior { StrafeOnly, StrafeAndTurn, TurnOnly, StrafeOnDodge, TurnOnDodge }
@@ -87,11 +93,33 @@ func _process(delta: float) -> void:
 ## player
 
 func _beat() -> void:
-	var dungeon = (owner as Dungeon)
 	if dungeon: dungeon.beat()
 
 
-func _move(grid_offset: Vector2i) -> void:
+func _check_for_ground(relative_position: Vector3, margin: float = 0.1) -> bool:
+	var check_origin = center.global_position
+	var check_direction = relative_position.normalized()
+	var check_target = check_origin + check_direction * relative_position.length()
+	var query = PhysicsRayQueryParameters3D.create(check_origin, check_target + check_direction * margin)
+	var space_state = get_world_3d().direct_space_state
+	var result = space_state.intersect_ray(query)
+	
+	if result:
+		# wall hit
+		return false
+	else:
+		var ground_distance = center.position.length() + margin
+		check_origin = check_target
+		check_direction = Vector3.DOWN
+		check_target = check_origin + check_direction * ground_distance
+		query = PhysicsRayQueryParameters3D.create(check_origin, check_target + check_direction * margin)
+		result = space_state.intersect_ray(query)
+		
+		# ground hit
+		return true if result else false
+
+
+func _move(grid_offset: Vector2i, grid_interval: float = 1.0) -> void:
 	if _is_moving:
 		if !allow_skip_move_anim: return
 		
@@ -109,10 +137,14 @@ func _move(grid_offset: Vector2i) -> void:
 		# start a new movement. otherwise, cancel.
 		if difference > 0.2: return
 	
+	var tile_offset = (_last_complete_turn_basis.x * grid_offset.x * grid_interval) + (-_last_complete_turn_basis.z * grid_offset.y * grid_interval)
+	
+	if !_check_for_ground(tile_offset): return
+	
 	_is_moving = true
 	
 	var _original_position = position
-	_target_position = _last_complete_move_position + (_last_complete_turn_basis.x * grid_offset.x) + (-_last_complete_turn_basis.z * grid_offset.y)
+	_target_position = _last_complete_move_position + tile_offset
 	
 	if _move_tween: _move_tween.kill()
 	_move_tween = create_tween()
@@ -131,7 +163,7 @@ func _move(grid_offset: Vector2i) -> void:
 func _move_tile(direction: Vector2i) -> void:
 	# # basic version
 	# position += (transform.basis.x * direction.x) + (-transform.basis.z * direction.y)
-	_move(direction)
+	_move(direction, dungeon.tile_size if dungeon else 1.0)
 
 
 func _turn(yaw_radians: float) -> void:

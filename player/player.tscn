@@ -12,9 +12,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.875, -0.2)
 [node name="Camera3D" type="Camera3D" parent="Head" unique_id=154479637]
 cull_mask = 1048573
 
-[node name="WorldMesh (Layer2)" type="Node3D" parent="." unique_id=905989414]
+[node name="Center" type="Node3D" parent="." unique_id=1777748660]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
-[node name="Sprite3D" type="Sprite3D" parent="WorldMesh (Layer2)" unique_id=2038189852]
+[node name="Body" type="Node3D" parent="." unique_id=905989414]
+
+[node name="Sprite3D" type="Sprite3D" parent="Body" unique_id=2038189852]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 layers = 2
 pixel_size = 0.0078

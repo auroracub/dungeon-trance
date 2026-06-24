@@ -1,6 +1,10 @@
 
 class_name Dungeon extends Node3D
 
+## tiles
+
+@export var tile_size := 1.0
+
 ## bpm
 
 var bpm := 0.01

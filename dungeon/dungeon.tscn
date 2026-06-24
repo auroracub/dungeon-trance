@@ -3,8 +3,10 @@
 [ext_resource type="PackedScene" uid="uid://hf7tlhu5yxck" path="res://player/player.tscn" id="1_2uogr"]
 [ext_resource type="Script" uid="uid://bj8jw1sydlbif" path="res://dungeon/dungeon.gd" id="1_cy6l0"]
 [ext_resource type="Material" uid="uid://k3ae0xoylusf" path="res://dungeon/shaders/tile_material.tres" id="2_cy6l0"]
+[ext_resource type="Shader" uid="uid://bea0mefrcvh1p" path="res://dungeon/shaders/tile_shader.gdshader" id="3_3tru8"]
 [ext_resource type="Texture2D" uid="uid://ciqmjaxip0vu" path="res://dungeon/textures/chest_texture.png" id="3_xtpqo"]
 [ext_resource type="Texture2D" uid="uid://dm857522wfrg" path="res://dungeon/textures/ghost_1.png" id="4_p4tjh"]
+[ext_resource type="Texture2D" uid="uid://rhsusccidolj" path="res://dungeon/textures/tile_texture.png" id="4_v5yuf"]
 [ext_resource type="Texture2D" uid="uid://cyag1ictl6512" path="res://dungeon/textures/ghost_2.png" id="5_vx3dd"]
 [ext_resource type="AudioStream" uid="uid://xy0ovxr22koe" path="res://dungeon/sfx/kick_3.mp3" id="7_xtpqo"]
 [ext_resource type="AudioStream" uid="uid://gq3yr3wgwmnp" path="res://dungeon/sfx/kick_1.mp3" id="8_vx3dd"]
@@ -15,7 +17,13 @@
 size = Vector2(15, 15)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_upd8q"]
-size = Vector3(10, 0.001, 10)
+size = Vector3(15, 0.1, 15)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mxtxi"]
+render_priority = 0
+shader = ExtResource("3_3tru8")
+shader_parameter/tile_mask_texture = ExtResource("4_v5yuf")
+shader_parameter/scale = Vector2(30, 30)
 
 [sub_resource type="Environment" id="Environment_ce1tf"]
 background_mode = 1
@@ -29,13 +37,23 @@ script = ExtResource("1_cy6l0")
 [node name="Rooms" type="Node3D" parent="." unique_id=1955545466]
 
 [node name="Floor" type="MeshInstance3D" parent="Rooms" unique_id=387157825]
+visible = false
 material_override = ExtResource("2_cy6l0")
 mesh = SubResource("PlaneMesh_tjq72")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Rooms/Floor" unique_id=1733836102]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Rooms/Floor/StaticBody3D" unique_id=1815459880]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, 0)
 shape = SubResource("BoxShape3D_upd8q")
+disabled = true
+
+[node name="GroundPolygon" type="CSGPolygon3D" parent="Rooms" unique_id=1337464014]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
+use_collision = true
+polygon = PackedVector2Array(-7.5, -2.5, -1.5, -2.5, -1.5, -5.5, -2.5, -5.5, -2.5, -7.5, 1.5, -7.5, 1.5, -5.5, 0.5, -5.5, 0.5, -2.5, 7.5, -2.5, 7.5, 7.5, -4.5, 7.5, -4.5, 1.5, -7.5, 1.5)
+depth = 0.1
+material = SubResource("ShaderMaterial_mxtxi")
 
 [node name="Entities" type="Node3D" parent="." unique_id=2083963544]
 
@@ -43,19 +61,19 @@ shape = SubResource("BoxShape3D_upd8q")
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
 
 [node name="Chest" type="Sprite3D" parent="Entities" unique_id=1418952021]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.5, 3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.5, 7)
 pixel_size = 0.0078
 billboard = 2
 texture = ExtResource("3_xtpqo")
 
 [node name="Ghost1" type="Sprite3D" parent="Entities" unique_id=310289695]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 1, 2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1, -4)
 pixel_size = 0.0078
 billboard = 2
 texture = ExtResource("4_p4tjh")
 
 [node name="Ghost2" type="Sprite3D" parent="Entities" unique_id=1499002351]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 1, 4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1, 1)
 pixel_size = 0.0078
 billboard = 2
 texture = ExtResource("5_vx3dd")
