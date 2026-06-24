@@ -9,7 +9,9 @@ class_name Dungeon extends Node3D
 
 @export var bpm_blend = 0.0
 
-var bpm := 0.01
+var _min_bpm := 10.0
+var _max_bpm := 400.0
+@onready var bpm := _min_bpm
 var _beat_adjust_timer := 0.0
 var _beat_play_timer := 0.0
 var _beat_count := 1 # counted from 1
@@ -32,6 +34,18 @@ signal eighth_note
 @onready var _background_player : AudioStreamPlayer = %BackgroundPlayer
 
 
+## energy
+
+enum EnergyState { Subsonic, Low, Medium, High, Supersonic }
+
+var energy_state = EnergyState.Subsonic
+var subsonic_threshold := 45.0
+var low_threshold := 90.0
+var high_threshold := 180.0
+var supersonic_threshold := 360.0
+
+@onready var energy_center = calculate_energy_center(energy_state)
+
 ## node
 
 func _ready() -> void:
@@ -39,6 +53,9 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	_update_debug_ui()
+	_update_energy_state()
+	
 	_beat_adjust_timer += delta
 	_beat_play_timer += delta
 	
@@ -49,8 +66,6 @@ func _process(delta: float) -> void:
 		_beat_play_timer = 0.0
 		_beat_count += 1
 		play_beat = true
-	
-	_update_bpm_debug()
 	
 	if play_beat:
 		var beat_value = int(note_value)
@@ -98,13 +113,49 @@ func _process(delta: float) -> void:
 
 func beat(change_bpm: bool = true) -> void:
 	if change_bpm:
-		var new_bpm = 60.0 / maxf(0.01, _beat_adjust_timer)
-		bpm = lerpf(bpm, new_bpm, 1.0 - clampf(bpm_blend, 0.0, 0.9))
+		var new_bpm = clampf(60.0 / maxf(0.01, _beat_adjust_timer), _min_bpm, _max_bpm)
+		energy_center = calculate_energy_center(energy_state)
+		bpm = lerpf(
+			new_bpm,
+			energy_center,
+			1.0 / pow(abs(energy_center - new_bpm), 2.0)
+		)
 		_beat_adjust_timer = 0.0
 	_step_player.play()
 
 
+## energy
+
+func _update_energy_state() -> void:
+	set_energy_state(
+		EnergyState.Subsonic if bpm < subsonic_threshold else
+		EnergyState.Low if bpm < low_threshold else
+		EnergyState.Medium if bpm < high_threshold else
+		EnergyState.High if bpm < supersonic_threshold else
+		EnergyState.Supersonic
+	)
+
+func set_energy_state(new_state: EnergyState) -> void:
+	energy_state = new_state
+
+func calculate_energy_center(state) -> float:
+	match state:
+		EnergyState.Subsonic:
+			return (_min_bpm + subsonic_threshold) * 0.5
+		EnergyState.Low:
+			return (subsonic_threshold + low_threshold) * 0.5
+		EnergyState.Medium:
+			return (low_threshold + high_threshold) * 0.5
+		EnergyState.High:
+			return (high_threshold + supersonic_threshold) * 0.5
+		EnergyState.Supersonic:
+			return (supersonic_threshold + _max_bpm) * 0.5
+		_:
+			# default to subsonic
+			return (_min_bpm + subsonic_threshold) * 0.5
+
 ## debug
 
-func _update_bpm_debug() -> void:
+func _update_debug_ui() -> void:
 	%BPMValue.text = str(int(bpm))
+	%EnergyValue.text = EnergyState.keys()[energy_state]

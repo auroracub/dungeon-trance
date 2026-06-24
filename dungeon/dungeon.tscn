@@ -107,7 +107,7 @@ bus = &"Music"
 [node name="SequencePlayer" type="AudioStreamPlayer" parent="Global" unique_id=1203437161]
 unique_name_in_owner = true
 stream = ExtResource("10_3tru8")
-volume_db = -10.0
+volume_db = -12.0
 bus = &"Music"
 
 [node name="BackgroundPlayer" type="AudioStreamPlayer" parent="Global" unique_id=1253597089]
@@ -121,7 +121,32 @@ environment = SubResource("Environment_ce1tf")
 
 [node name="Debug" type="CanvasLayer" parent="." unique_id=432502886]
 
+[node name="EnergyContainer" type="VBoxContainer" parent="Debug" unique_id=311230618]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -30.5
+offset_top = 32.0
+offset_right = 39.5
+offset_bottom = 169.0
+grow_horizontal = 2
+
+[node name="EnergyValue" type="Label" parent="Debug/EnergyContainer" unique_id=460320580]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EnergyLabel" type="Label" parent="Debug/EnergyContainer" unique_id=2112893759]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "energy"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="BPMContainer" type="VBoxContainer" parent="Debug" unique_id=1105936768]
+visible = false
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
