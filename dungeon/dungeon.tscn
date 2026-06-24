@@ -15,6 +15,7 @@
 [ext_resource type="AudioStream" uid="uid://2bkkrtfvwpsc" path="res://dungeon/sfx/kick_deep_2.mp3" id="10_v5yuf"]
 [ext_resource type="AudioStream" uid="uid://bebxcheryi1bd" path="res://dungeon/sfx/perc_2.mp3" id="12_v5yuf"]
 [ext_resource type="AudioStream" uid="uid://cknm45e6eyfiy" path="res://dungeon/sfx/acid_f#_maj.mp3" id="13_yrjow"]
+[ext_resource type="PackedScene" uid="uid://c3p5h0danxa2o" path="res://testing/debug_overlay.tscn" id="16_ugyaa"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_tjq72"]
 size = Vector2(15, 15)
@@ -138,53 +139,13 @@ bus = &"Music"
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Global" unique_id=1905369222]
 environment = SubResource("Environment_ce1tf")
 
-[node name="Debug" type="CanvasLayer" parent="." unique_id=432502886]
-
-[node name="EnergyContainer" type="VBoxContainer" parent="Debug" unique_id=311230618]
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -30.5
+[node name="DebugOverlay" parent="." unique_id=1541782437 node_paths=PackedStringArray("dungeon", "player") instance=ExtResource("16_ugyaa")]
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 32.0
 offset_top = 32.0
-offset_right = 39.5
-offset_bottom = 169.0
-grow_horizontal = 2
-
-[node name="EnergyValue" type="Label" parent="Debug/EnergyContainer" unique_id=460320580]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 64
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="EnergyLabel" type="Label" parent="Debug/EnergyContainer" unique_id=2112893759]
-layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "energy"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="BPMContainer" type="VBoxContainer" parent="Debug" unique_id=1105936768]
-visible = false
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -20.0
-offset_top = 32.0
-offset_right = 29.0
-offset_bottom = 104.0
-grow_horizontal = 2
-
-[node name="BPMValue" type="Label" parent="Debug/BPMContainer" unique_id=1236724006]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 64
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="BPMLabel" type="Label" parent="Debug/BPMContainer" unique_id=2115365700]
-layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "bpm"
-horizontal_alignment = 1
-vertical_alignment = 1
+offset_right = 1888.0
+offset_bottom = 1048.0
+dungeon = NodePath("..")
+player = NodePath("../Entities/Player")

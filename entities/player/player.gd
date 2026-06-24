@@ -8,7 +8,7 @@ class_name Player extends Node3D
 
 ## moving
 
-enum SideMoveBehavior { StrafeOnly, StrafeAndTurn, TurnOnly, StrafeOnDodge, TurnOnDodge }
+enum SideMoveBehavior { StrafeOnDodge, TurnOnDodge, StrafeOnly, StrafeAndTurn, TurnOnly }
 
 @export var side_move_behavior := SideMoveBehavior.StrafeOnDodge
 

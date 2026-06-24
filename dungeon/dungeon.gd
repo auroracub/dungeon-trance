@@ -58,7 +58,6 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	_update_debug_ui()
 	_update_energy_state()
 	
 	_beat_adjust_timer += delta
@@ -165,9 +164,3 @@ func calculate_energy_center(state) -> float:
 		_:
 			# default to subsonic
 			return (_min_bpm + subsonic_threshold) * 0.5
-
-## debug
-
-func _update_debug_ui() -> void:
-	%BPMValue.text = str(int(bpm))
-	%EnergyValue.text = Global.EnergyState.keys()[energy_state]
