@@ -1,7 +1,6 @@
 
 class_name Player extends Node3D
 
-## references
 
 @onready var dungeon := owner as Dungeon
 @onready var center := %Center
@@ -16,6 +15,9 @@ enum SideMoveBehavior { StrafeOnly, StrafeAndTurn, TurnOnly, StrafeOnDodge, Turn
 @export var move_speed: float = 7.5 # per tile
 var allow_skip_move_anim := true
 var beat_on_move := true
+var beat_on_move_changes_bpm := true
+var beat_sync_move := false
+var _move_queue: Array[Callable] = []
 
 var _move_tween : Tween
 var _is_moving := false
@@ -27,7 +29,10 @@ var _is_moving := false
 
 @export var turn_speed: float = 7.5 # per angle
 var allow_skip_turn_anim := true
-var beat_on_turn := false
+var beat_on_turn := true
+var beat_on_turn_changes_bpm := false
+var beat_sync_turn := false
+var _turn_queue: Array[Callable] = []
 
 var _turn_tween : Tween
 var _is_turning := false
@@ -39,7 +44,7 @@ var _is_turning := false
 ## node
 
 func _ready() -> void:
-	pass
+	dungeon.quarter_note.connect(_on_quarter_beat)
 
 
 func _process(delta: float) -> void:
@@ -90,10 +95,20 @@ func _process(delta: float) -> void:
 		_turn_right()
 
 
+## beat
+
+func _on_quarter_beat() -> void:
+	for callable in _move_queue: callable.call()
+	_move_queue.clear()
+	
+	for callable in _turn_queue: callable.call()
+	_turn_queue.clear()
+
+
 ## player
 
-func _beat() -> void:
-	if dungeon: dungeon.beat()
+func _beat(change_bpm) -> void:
+	if dungeon: dungeon.beat(change_bpm)
 
 
 func _check_for_ground(relative_position: Vector3, margin: float = 0.1) -> bool:
@@ -131,7 +146,7 @@ func _move(grid_offset: Vector2i, grid_interval: float = 1.0) -> void:
 		_last_complete_move_position = _target_position
 		_is_moving = false
 		
-		if beat_on_move: _beat()
+		if beat_on_move: _beat(beat_on_move_changes_bpm)
 		
 		# if the movement was nearly complete (based on this threshold) and skips are allowed,
 		# start a new movement. otherwise, cancel.
@@ -154,7 +169,7 @@ func _move(grid_offset: Vector2i, grid_interval: float = 1.0) -> void:
 	
 	await _move_tween.finished
 	
-	if beat_on_move: _beat()
+	if beat_on_move: _beat(beat_on_move_changes_bpm)
 	
 	_last_complete_move_position = _target_position
 	_is_moving = false
@@ -163,7 +178,10 @@ func _move(grid_offset: Vector2i, grid_interval: float = 1.0) -> void:
 func _move_tile(direction: Vector2i) -> void:
 	# # basic version
 	# position += (transform.basis.x * direction.x) + (-transform.basis.z * direction.y)
-	_move(direction, dungeon.tile_size if dungeon else 1.0)
+	var callable = func(): _move(direction, dungeon.tile_size if dungeon else 1.0)
+	
+	if beat_sync_move: _move_queue.append(callable)
+	else: callable.call()
 
 
 func _turn(yaw_radians: float) -> void:
@@ -179,7 +197,7 @@ func _turn(yaw_radians: float) -> void:
 		_last_complete_turn_basis = transform.basis
 		_is_turning = false
 		
-		if beat_on_turn: _beat()
+		if beat_on_turn: _beat(beat_on_turn_changes_bpm)
 		
 		# if the rotation was nearly complete (based on this threshold) and skips are allowed,
 		# start a new rotation. otherwise, cancel.
@@ -196,7 +214,7 @@ func _turn(yaw_radians: float) -> void:
 		rotation.y = lerp_angle(_original_rotation.y, _target_rotation, alpha),
 		0.0, 1.0, abs(angle_difference(_original_rotation.y, _target_rotation)) / turn_speed)
 	
-	if beat_on_turn: _beat()
+	if beat_on_turn: _beat(beat_on_turn_changes_bpm)
 	
 	await _turn_tween.finished
 	
@@ -206,8 +224,14 @@ func _turn(yaw_radians: float) -> void:
 
 
 func _turn_left() -> void:
-	_turn(deg_to_rad(-90.0))
+	var callable = func(): _turn(deg_to_rad(-90.0))
+	
+	if beat_sync_turn: _turn_queue.append(callable)
+	else: callable.call()
 
 
 func _turn_right() -> void:
-	_turn(deg_to_rad(+90.0))
+	var callable = func(): _turn(deg_to_rad(+90.0))
+	
+	if beat_sync_turn: _turn_queue.append(callable)
+	else: callable.call()

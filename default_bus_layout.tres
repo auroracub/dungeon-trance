@@ -48,6 +48,6 @@ bus/1/effect/1/enabled = true
 bus/1/effect/2/effect = SubResource("AudioEffectPhaser_j3pel")
 bus/1/effect/2/enabled = true
 bus/1/effect/3/effect = SubResource("AudioEffectLowPassFilter_j3pel")
-bus/1/effect/3/enabled = true
+bus/1/effect/3/enabled = false
 bus/1/effect/4/effect = SubResource("AudioEffectChorus_j3pel")
 bus/1/effect/4/enabled = true
