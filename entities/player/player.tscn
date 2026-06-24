@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://hf7tlhu5yxck"]
 
-[ext_resource type="Script" uid="uid://b61xgyq1blshp" path="res://player/player.gd" id="1_4flbx"]
-[ext_resource type="Texture2D" uid="uid://crouecd42krxy" path="res://player/player.png" id="2_onrkg"]
+[ext_resource type="Script" uid="uid://b61xgyq1blshp" path="res://entities/player/player.gd" id="1_4flbx"]
+[ext_resource type="Texture2D" uid="uid://crouecd42krxy" path="res://entities/player/player.png" id="2_onrkg"]
 
 [node name="Player" type="Node3D" unique_id=1455120242]
 script = ExtResource("1_4flbx")

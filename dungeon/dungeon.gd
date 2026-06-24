@@ -36,13 +36,13 @@ signal eighth_note
 
 ## energy
 
-enum EnergyState { Subsonic, Low, Medium, High, Supersonic }
-
-var energy_state = EnergyState.Subsonic
+var energy_state = Global.EnergyState.Subsonic
 var subsonic_threshold := 45.0
 var low_threshold := 90.0
 var high_threshold := 180.0
 var supersonic_threshold := 360.0
+
+signal energy_state_changed(old_state: Global.EnergyState, new_state: Global.EnergyState)
 
 @onready var energy_center = calculate_energy_center(energy_state)
 
@@ -50,6 +50,11 @@ var supersonic_threshold := 360.0
 
 func _ready() -> void:
 	if _whole_note_player and _whole_note_player.stream: _whole_note_player.play()
+	
+	RenderingServer.global_shader_parameter_set("bpm", bpm)
+	RenderingServer.global_shader_parameter_set("bpm_alpha", remap(bpm, _min_bpm, _max_bpm, 0.0, 1.0))
+	RenderingServer.global_shader_parameter_set("energy_level", float(energy_state))
+	RenderingServer.global_shader_parameter_set("energy_alpha", float(energy_state) / float(Global.EnergyState.keys().size()))
 
 
 func _process(delta: float) -> void:
@@ -118,37 +123,44 @@ func beat(change_bpm: bool = true) -> void:
 		bpm = lerpf(
 			new_bpm,
 			energy_center,
-			1.0 / pow(abs(energy_center - new_bpm), 2.0)
+			clampf(1.0 / pow(abs(energy_center - new_bpm), 2.0), 0.0, 0.9)
 		)
 		_beat_adjust_timer = 0.0
 	_step_player.play()
+	RenderingServer.global_shader_parameter_set("bpm", bpm)
+	RenderingServer.global_shader_parameter_set("bpm_alpha", remap(bpm, subsonic_threshold, supersonic_threshold, 0.0, 1.0))
 
 
 ## energy
 
 func _update_energy_state() -> void:
 	set_energy_state(
-		EnergyState.Subsonic if bpm < subsonic_threshold else
-		EnergyState.Low if bpm < low_threshold else
-		EnergyState.Medium if bpm < high_threshold else
-		EnergyState.High if bpm < supersonic_threshold else
-		EnergyState.Supersonic
+		Global.EnergyState.Subsonic if bpm < subsonic_threshold else
+		Global.EnergyState.Low if bpm < low_threshold else
+		Global.EnergyState.Medium if bpm < high_threshold else
+		Global.EnergyState.High if bpm < supersonic_threshold else
+		Global.EnergyState.Supersonic
 	)
 
-func set_energy_state(new_state: EnergyState) -> void:
-	energy_state = new_state
+func set_energy_state(new_state: Global.EnergyState) -> void:
+	if new_state != energy_state:
+		energy_state_changed.emit(energy_state, new_state)
+		energy_state = new_state
+		
+		RenderingServer.global_shader_parameter_set("energy_level", float(energy_state))
+		RenderingServer.global_shader_parameter_set("energy_alpha", float(energy_state) / float(Global.EnergyState.keys().size()))
 
 func calculate_energy_center(state) -> float:
 	match state:
-		EnergyState.Subsonic:
+		Global.EnergyState.Subsonic:
 			return (_min_bpm + subsonic_threshold) * 0.5
-		EnergyState.Low:
+		Global.EnergyState.Low:
 			return (subsonic_threshold + low_threshold) * 0.5
-		EnergyState.Medium:
+		Global.EnergyState.Medium:
 			return (low_threshold + high_threshold) * 0.5
-		EnergyState.High:
+		Global.EnergyState.High:
 			return (high_threshold + supersonic_threshold) * 0.5
-		EnergyState.Supersonic:
+		Global.EnergyState.Supersonic:
 			return (supersonic_threshold + _max_bpm) * 0.5
 		_:
 			# default to subsonic
@@ -158,4 +170,4 @@ func calculate_energy_center(state) -> float:
 
 func _update_debug_ui() -> void:
 	%BPMValue.text = str(int(bpm))
-	%EnergyValue.text = EnergyState.keys()[energy_state]
+	%EnergyValue.text = Global.EnergyState.keys()[energy_state]

@@ -15,6 +15,7 @@ enum SideMoveBehavior { StrafeOnly, StrafeAndTurn, TurnOnly, StrafeOnDodge, Turn
 @export var move_speed: float = 7.5 # per tile
 var allow_skip_move_anim := true
 var beat_on_move := true
+var beat_on_collide := true
 var beat_on_move_changes_bpm := true
 var beat_sync_move := false
 var _move_queue: Array[Callable] = []
@@ -154,7 +155,9 @@ func _move(grid_offset: Vector2i, grid_interval: float = 1.0) -> void:
 	
 	var tile_offset = (_last_complete_turn_basis.x * grid_offset.x * grid_interval) + (-_last_complete_turn_basis.z * grid_offset.y * grid_interval)
 	
-	if !_check_for_ground(tile_offset): return
+	if !_check_for_ground(tile_offset):
+		if beat_on_move and beat_on_collide: _beat(beat_on_move_changes_bpm)
+		return
 	
 	_is_moving = true
 	

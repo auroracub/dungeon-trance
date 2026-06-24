@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c4mbqg3ggydpb"]
 
-[ext_resource type="PackedScene" uid="uid://hf7tlhu5yxck" path="res://player/player.tscn" id="1_2uogr"]
+[ext_resource type="PackedScene" uid="uid://hf7tlhu5yxck" path="res://entities/player/player.tscn" id="1_2uogr"]
 [ext_resource type="Script" uid="uid://bj8jw1sydlbif" path="res://dungeon/dungeon.gd" id="1_cy6l0"]
 [ext_resource type="Material" uid="uid://k3ae0xoylusf" path="res://dungeon/shaders/tile_material.tres" id="2_cy6l0"]
 [ext_resource type="Shader" uid="uid://bea0mefrcvh1p" path="res://dungeon/shaders/tile_shader.gdshader" id="3_3tru8"]
@@ -8,6 +8,9 @@
 [ext_resource type="Texture2D" uid="uid://dm857522wfrg" path="res://dungeon/textures/ghost_1.png" id="4_p4tjh"]
 [ext_resource type="Texture2D" uid="uid://rhsusccidolj" path="res://dungeon/textures/tile_texture.png" id="4_v5yuf"]
 [ext_resource type="Texture2D" uid="uid://cyag1ictl6512" path="res://dungeon/textures/ghost_2.png" id="5_vx3dd"]
+[ext_resource type="PackedScene" uid="uid://cr4navwtieblp" path="res://entities/chest/chest.tscn" id="6_3tru8"]
+[ext_resource type="Shader" uid="uid://dsvtjnsluuxsp" path="res://entities/phase_shader_test.gdshader" id="7_mxtxi"]
+[ext_resource type="Script" uid="uid://brjmtl22wxhn3" path="res://entities/phase_object.gd" id="8_v5yuf"]
 [ext_resource type="AudioStream" uid="uid://s0wn75a51lse" path="res://dungeon/sfx/stab_g.mp3" id="10_3tru8"]
 [ext_resource type="AudioStream" uid="uid://2bkkrtfvwpsc" path="res://dungeon/sfx/kick_deep_2.mp3" id="10_v5yuf"]
 [ext_resource type="AudioStream" uid="uid://bebxcheryi1bd" path="res://dungeon/sfx/perc_2.mp3" id="12_v5yuf"]
@@ -24,6 +27,18 @@ render_priority = 0
 shader = ExtResource("3_3tru8")
 shader_parameter/tile_mask_texture = ExtResource("4_v5yuf")
 shader_parameter/scale = Vector2(30, 30)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ugyaa"]
+render_priority = 0
+shader = ExtResource("7_mxtxi")
+shader_parameter/albedo_texture = ExtResource("3_xtpqo")
+shader_parameter/y_billboard = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yrjow"]
+render_priority = 0
+shader = ExtResource("7_mxtxi")
+shader_parameter/albedo_texture = ExtResource("5_vx3dd")
+shader_parameter/y_billboard = true
 
 [sub_resource type="Environment" id="Environment_ce1tf"]
 background_mode = 1
@@ -60,23 +75,27 @@ material = SubResource("ShaderMaterial_mxtxi")
 [node name="Player" parent="Entities" unique_id=1455120242 instance=ExtResource("1_2uogr")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
 
-[node name="Chest" type="Sprite3D" parent="Entities" unique_id=1418952021]
+[node name="Chest" parent="Entities" unique_id=2014936504 instance=ExtResource("6_3tru8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.5, 7)
-pixel_size = 0.0078
-billboard = 2
-texture = ExtResource("3_xtpqo")
+material_override = SubResource("ShaderMaterial_ugyaa")
 
 [node name="Ghost1" type="Sprite3D" parent="Entities" unique_id=310289695]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1, -4)
+material_override = SubResource("ShaderMaterial_yrjow")
 pixel_size = 0.0078
 billboard = 2
 texture = ExtResource("4_p4tjh")
+script = ExtResource("8_v5yuf")
+energy_phases = Array[int]([2])
 
 [node name="Ghost2" type="Sprite3D" parent="Entities" unique_id=1499002351]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1, 1)
+material_override = SubResource("ShaderMaterial_yrjow")
 pixel_size = 0.0078
 billboard = 2
 texture = ExtResource("5_vx3dd")
+script = ExtResource("8_v5yuf")
+energy_phases = Array[int]([0, 4])
 
 [node name="Global" type="Node3D" parent="." unique_id=1453770596]
 
