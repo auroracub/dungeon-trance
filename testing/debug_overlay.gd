@@ -31,6 +31,11 @@ class DebugOption:
 					push_error("Error setting up debug overlay: invalid node")
 
 func _ready() -> void:
+	# not the most efficient, but it works
+	if not OS.is_debug_build():
+		visible = false
+		queue_free()
+	
 	# setup options
 	for option in [
 		DebugOption.new(%MoveSpeed, func(): return player.move_speed, func(v): player.move_speed = v),
