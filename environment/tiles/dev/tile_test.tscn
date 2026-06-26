@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://cifrna5veltfe"]
+
+[ext_resource type="Script" uid="uid://0qr1gw6f80tl" path="res://entities/lattice_node/lattice_node.gd" id="1_14cgl"]
+[ext_resource type="Material" uid="uid://do4xj83xvoag5" path="res://environment/tiles/shaders/tile_material_uv.tres" id="2_hlq0a"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_tjq72"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ce1tf"]
+size = Vector3(2, 0.1, 2)
+
+[node name="Tile" type="Node3D" unique_id=508223555]
+script = ExtResource("1_14cgl")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1179201890]
+mesh = SubResource("PlaneMesh_tjq72")
+surface_material_override/0 = ExtResource("2_hlq0a")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D" unique_id=1308419292]
+collision_layer = 3
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D" unique_id=1750432735]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, 0)
+shape = SubResource("BoxShape3D_ce1tf")

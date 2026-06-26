@@ -1,0 +1,352 @@
+[gd_scene format=3 uid="uid://c3p5h0danxa2o"]
+
+[ext_resource type="Script" uid="uid://c66gibjumc3du" path="res://dev/debug_overlay.gd" id="1_vkfbk"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ce1tf"]
+bg_color = Color(0, 0, 0, 0.125)
+
+[node name="DebugOverlay" type="MarginContainer" unique_id=1536715306]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
+script = ExtResource("1_vkfbk")
+
+[node name="StatsContainer" type="VBoxContainer" parent="." unique_id=25981903]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+
+[node name="StatsButton" type="Button" parent="StatsContainer" unique_id=1643373843]
+unique_name_in_owner = true
+layout_mode = 2
+text = "<>"
+
+[node name="StatsTabContainer" type="TabContainer" parent="StatsContainer" unique_id=1143500405]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(125, 0)
+layout_mode = 2
+current_tab = 0
+tabs_visible = false
+use_hidden_tabs_for_min_size = true
+
+[node name="EnergyStateContainer" type="MarginContainer" parent="StatsContainer/StatsTabContainer" unique_id=165061191]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+metadata/_tab_index = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="StatsContainer/StatsTabContainer/EnergyStateContainer" unique_id=153913282]
+layout_mode = 2
+
+[node name="EnergyValue" type="Label" parent="StatsContainer/StatsTabContainer/EnergyStateContainer/VBoxContainer" unique_id=215785163]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EnergyLabel" type="Label" parent="StatsContainer/StatsTabContainer/EnergyStateContainer/VBoxContainer" unique_id=1818019506]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "energy"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BPMContainer" type="MarginContainer" parent="StatsContainer/StatsTabContainer" unique_id=2133625321]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+metadata/_tab_index = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="StatsContainer/StatsTabContainer/BPMContainer" unique_id=1351447171]
+layout_mode = 2
+
+[node name="BPMValue" type="Label" parent="StatsContainer/StatsTabContainer/BPMContainer/VBoxContainer" unique_id=82238503]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BPMLabel" type="Label" parent="StatsContainer/StatsTabContainer/BPMContainer/VBoxContainer" unique_id=1713070083]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "bpm"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="GameplayOptionsContainer" type="PanelContainer" parent="." unique_id=1556570892]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+theme_override_styles/panel = SubResource("StyleBoxFlat_ce1tf")
+
+[node name="MarginContainer" type="MarginContainer" parent="GameplayOptionsContainer" unique_id=1174112323]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GameplayOptionsContainer/MarginContainer" unique_id=2043002240]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer" unique_id=335305825]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1144901094]
+layout_mode = 2
+text = "show gameplay options"
+
+[node name="ShowGameplayOptions" type="CheckButton" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1388900337]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="GameplayOptions" type="ScrollContainer" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer" unique_id=740016788]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(275, 500)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions" unique_id=546502597]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Separator1" type="Label" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer" unique_id=399433762]
+layout_mode = 2
+text = "-----------------------------------------------------"
+
+[node name="MoveSpeed" type="HBoxContainer" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer" unique_id=678762042]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/MoveSpeed" unique_id=843315306]
+layout_mode = 2
+text = "move_speed: "
+
+[node name="MoveSpeed" type="SpinBox" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/MoveSpeed" unique_id=113427792]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 25.0
+step = 0.1
+value = 7.5
+
+[node name="MaxStepHeight" type="HBoxContainer" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer" unique_id=655067857]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/MaxStepHeight" unique_id=1323963830]
+layout_mode = 2
+text = "max_step_height: "
+
+[node name="MaxStepHeight" type="SpinBox" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/MaxStepHeight" unique_id=1331331212]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1.0
+step = 0.05
+value = 0.25
+
+[node name="AllowSkipMoveAnim" type="HBoxContainer" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer" unique_id=1716497331]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/AllowSkipMoveAnim" unique_id=459504031]
+layout_mode = 2
+text = "allow_skip_move_anim: "
+
+[node name="AllowSkipMoveAnim" type="CheckButton" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/AllowSkipMoveAnim" unique_id=1333897092]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = false
+
+[node name="BeatOnCollide" type="HBoxContainer" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer" unique_id=1878361347]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/BeatOnCollide" unique_id=1052285381]
+layout_mode = 2
+text = "beat_on_collide: "
+
+[node name="BeatOnCollide" type="CheckButton" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/BeatOnCollide" unique_id=1457291841]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+
+[node name="SideMoveBehavior" type="HBoxContainer" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer" unique_id=1972969365]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/SideMoveBehavior" unique_id=1488231622]
+layout_mode = 2
+text = "side_move_behavior: "
+
+[node name="SideMoveBehavior" type="MenuButton" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/SideMoveBehavior" unique_id=471294693]
+unique_name_in_owner = true
+layout_mode = 2
+text = "select"
+item_count = 5
+popup/item_0/text = "StrafeOnDodge"
+popup/item_0/id = 0
+popup/item_1/text = "TurnOnDodge"
+popup/item_1/id = 1
+popup/item_2/text = "StrafeOnly"
+popup/item_2/id = 2
+popup/item_3/text = "StrafeAndTurn"
+popup/item_3/id = 3
+popup/item_4/text = "TurnOnly"
+popup/item_4/id = 4
+
+[node name="Separator2" type="Label" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer" unique_id=1490097117]
+layout_mode = 2
+text = "-----------------------------------------------------"
+
+[node name="TurnSpeed" type="HBoxContainer" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer" unique_id=496106663]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/TurnSpeed" unique_id=264886877]
+layout_mode = 2
+text = "turn_speed: "
+
+[node name="TurnSpeed" type="SpinBox" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/TurnSpeed" unique_id=68727716]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.1
+max_value = 25.0
+step = 0.1
+value = 7.5
+
+[node name="AllowSkipTurnAnim" type="HBoxContainer" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer" unique_id=157057980]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/AllowSkipTurnAnim" unique_id=176386640]
+layout_mode = 2
+text = "allow_skip_turn_anim: "
+
+[node name="AllowSkipTurnAnim" type="CheckButton" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/AllowSkipTurnAnim" unique_id=1675678464]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+
+[node name="BeatOnTurn" type="HBoxContainer" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer" unique_id=474840562]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/BeatOnTurn" unique_id=1117122655]
+layout_mode = 2
+text = "beat_on_turn: "
+
+[node name="BeatOnTurn" type="CheckButton" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/BeatOnTurn" unique_id=831219503]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+
+[node name="BeatOnTurnChangesBPM" type="HBoxContainer" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer" unique_id=1647744276]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/BeatOnTurnChangesBPM" unique_id=1996831692]
+layout_mode = 2
+text = "beat_on_turn_changes_bpm: "
+
+[node name="BeatOnTurnChangesBPM" type="CheckButton" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/BeatOnTurnChangesBPM" unique_id=1751670225]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Separator3" type="Label" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer" unique_id=1681386577]
+layout_mode = 2
+text = "-----------------------------------------------------"
+
+[node name="MinBPM" type="HBoxContainer" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer" unique_id=1864968055]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/MinBPM" unique_id=1331402914]
+layout_mode = 2
+text = "min_bpm: "
+
+[node name="MinBPM" type="SpinBox" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/MinBPM" unique_id=65425440]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 5.0
+max_value = 1000.0
+step = 5.0
+value = 10.0
+
+[node name="MaxBPM" type="HBoxContainer" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer" unique_id=1879439294]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/MaxBPM" unique_id=2062962399]
+layout_mode = 2
+text = "max_bpm: "
+
+[node name="MaxBPM" type="SpinBox" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/MaxBPM" unique_id=1123082323]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 5.0
+max_value = 1000.0
+step = 5.0
+value = 400.0
+
+[node name="SubsonicThreshold" type="HBoxContainer" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer" unique_id=1363021473]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/SubsonicThreshold" unique_id=841994488]
+layout_mode = 2
+text = "subsonic_threshold: "
+
+[node name="SubsonicThreshold" type="SpinBox" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/SubsonicThreshold" unique_id=362778115]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 5.0
+max_value = 1000.0
+step = 5.0
+value = 45.0
+
+[node name="LowThreshold" type="HBoxContainer" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer" unique_id=526456178]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/LowThreshold" unique_id=1529233132]
+layout_mode = 2
+text = "low_threshold: "
+
+[node name="LowThreshold" type="SpinBox" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/LowThreshold" unique_id=420379583]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 5.0
+max_value = 1000.0
+step = 5.0
+value = 90.0
+
+[node name="HighThreshold" type="HBoxContainer" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer" unique_id=702372109]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/HighThreshold" unique_id=261471694]
+layout_mode = 2
+text = "high_threshold: "
+
+[node name="HighThreshold" type="SpinBox" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/HighThreshold" unique_id=486316641]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 5.0
+max_value = 1000.0
+step = 5.0
+value = 180.0
+
+[node name="SupersonicThreshold" type="HBoxContainer" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer" unique_id=1587784185]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/SupersonicThreshold" unique_id=631646847]
+layout_mode = 2
+text = "supersonic_threshold: "
+
+[node name="SupersonicThreshold" type="SpinBox" parent="GameplayOptionsContainer/MarginContainer/VBoxContainer/GameplayOptions/VBoxContainer/SupersonicThreshold" unique_id=1575691161]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 5.0
+max_value = 1000.0
+step = 5.0
+value = 360.0

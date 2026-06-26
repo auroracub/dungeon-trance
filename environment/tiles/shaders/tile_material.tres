@@ -1,0 +1,11 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://k3ae0xoylusf"]
+
+[ext_resource type="Shader" uid="uid://bea0mefrcvh1p" path="res://environment/tiles/shaders/tile_shader.gdshader" id="1_y4tu0"]
+[ext_resource type="Texture2D" uid="uid://rhsusccidolj" path="res://environment/entities/tile_texture.png" id="2_eqwfr"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_y4tu0")
+shader_parameter/tile_mask_texture = ExtResource("2_eqwfr")
+shader_parameter/tile_size = 1.0
+shader_parameter/offset = Vector2(0, 0)

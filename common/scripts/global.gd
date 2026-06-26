@@ -1,0 +1,118 @@
+
+extends Node
+
+## general
+
+static func bool_to_unipolar(b: bool) -> int:
+	return 1 if b else 0
+
+
+static func bool_to_unipolarf(b: bool) -> float:
+	return 1.0 if b else 0.0
+
+
+static func bool_to_bipolar(b: bool) -> int:
+	return 1 if b else -1
+
+
+static func bool_to_bipolarf(b: bool) -> float:
+	return 1.0 if b else -1.0
+
+
+## energy
+
+enum EnergyState { Subsonic, Low, Medium, High, Supersonic }
+
+
+## direction 1d
+
+enum Direction1D { Positive, Negative }
+
+
+static func direction1d_to_bool(direction: Direction1D) -> bool:
+	return direction == Direction1D.Positive
+
+
+static func direction1d_to_bipolar(direction: Direction1D) -> int:
+	return bool_to_bipolar(direction1d_to_bool(direction))
+
+
+static func direction1d_to_bipolarf(direction: Direction1D) -> float:
+	return bool_to_bipolarf(direction1d_to_bool(direction))
+
+
+static func direction1d_to_unipolar(direction: Direction1D) -> int:
+	return bool_to_unipolar(direction1d_to_bool(direction))
+
+
+static func direction1d_to_unipolarf(direction: Direction1D) -> float:
+	return bool_to_unipolarf(direction1d_to_bool(direction))
+
+
+static func direction1d_to_string(direction: Direction1D) -> String:
+	return Direction1D.keys()[direction]
+
+
+static func direction1d_to_vertical2d(direction: Direction1D) -> Direction2D:
+	return Direction2D.Up if direction1d_to_bool(direction) else Direction2D.Down
+
+
+static func direction1d_to_horizontal2d(direction: Direction1D) -> Direction2D:
+	return Direction2D.Left if direction1d_to_bool(direction) else Direction2D.Right
+
+
+## direction 2d
+
+enum Direction2D { Up, Right, Down, Left }
+
+
+static func direction2d_is_vertical(direction: Direction2D) -> bool:
+	return direction == Direction2D.Up or direction == Direction2D.Down
+
+
+static func direction2d_is_horizontal(direction: Direction2D) -> bool:
+	return direction == Direction2D.Left or direction == Direction2D.Right
+
+
+static func direction2d_vertical_to_bipolar(direction: Direction2D) -> int:
+	return 1 if direction == Direction2D.Up else -1 if direction == Direction2D.Down else 0
+
+
+static func direction2d_vertical_to_bipolarf(direction: Direction2D) -> float:
+	return 1.0 if direction == Direction2D.Up else -1.0 if direction == Direction2D.Down else 0.0
+
+
+static func direction2d_horizontal_to_bipolar(direction: Direction2D) -> int:
+	return 1 if direction == Direction2D.Right else -1 if direction == Direction2D.Left else 0
+
+
+static func direction2d_horizontal_to_bipolarf(direction: Direction2D) -> float:
+	return 1.0 if direction == Direction2D.Right else -1.0 if direction == Direction2D.Left else 0.0
+
+
+static func direction2d_to_string(direction: Direction2D) -> String:
+	return Direction2D.keys()[direction]
+
+
+static func direction2d_turn(base: Direction2D, count: int) -> Direction2D:
+	return posmod(base + count, 4) as Direction2D
+
+
+static func _direction2d_turn_debug() -> bool:
+	print("--  start test  --")
+	var d = Direction2D.Up
+	print(Direction2D.keys()[d])
+	d = direction2d_turn(d, 1)
+	if d != Direction2D.Right: return false
+	print(Direction2D.keys()[d])
+	d = direction2d_turn(d, -2)
+	if d != Direction2D.Left: return false
+	print(Direction2D.keys()[d])
+	d = direction2d_turn(d, 7)
+	if d != Direction2D.Down: return false
+	print(Direction2D.keys()[d])
+	d = direction2d_turn(d, 2)
+	if d != Direction2D.Up: return false
+	print(Direction2D.keys()[d])
+	print("--   end test   --")
+	return true

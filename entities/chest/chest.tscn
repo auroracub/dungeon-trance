@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cr4navwtieblp"]
 
-[ext_resource type="Texture2D" uid="uid://ciqmjaxip0vu" path="res://dungeon/textures/chest_texture.png" id="1_twpm2"]
+[ext_resource type="Texture2D" uid="uid://ciqmjaxip0vu" path="res://entities/chest/chest_texture.png" id="1_twpm2"]
 [ext_resource type="Script" uid="uid://d2ma88gy8330n" path="res://components/phase_component.gd" id="2_vvkul"]
 
 [node name="Chest" type="Sprite3D" unique_id=2014936504]
