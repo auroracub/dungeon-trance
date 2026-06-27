@@ -52,6 +52,13 @@ enum EnergyState { Subsonic, Low, Medium, High, Supersonic }
 enum Direction1D { Positive, Negative }
 
 
+static func direction1d_invert(direction: Direction1D) -> Direction1D:
+	match direction:
+		Direction1D.Positive: return Direction1D.Negative
+		Direction1D.Negative: return Direction1D.Positive
+		_: return Direction1D.Negative
+
+
 static func direction1d_to_bool(direction: Direction1D) -> bool:
 	return direction == Direction1D.Positive
 
@@ -89,6 +96,15 @@ static func direction1d_to_horizontal2d(direction: Direction1D) -> Direction2D:
 enum Direction2D { Up, Right, Down, Left }
 
 
+static func direction2d_invert(direction: Direction2D) -> Direction2D:
+	match direction:
+		Direction2D.Up: return Direction2D.Down
+		Direction2D.Right: return Direction2D.Left
+		Direction2D.Down: return Direction2D.Up
+		Direction2D.Left: return Direction2D.Right
+		_: return Direction2D.Down
+
+
 static func direction2d_is_vertical(direction: Direction2D) -> bool:
 	return direction == Direction2D.Up or direction == Direction2D.Down
 
@@ -119,6 +135,20 @@ static func direction2d_to_string(direction: Direction2D) -> String:
 
 static func direction2d_turn(base: Direction2D, count: int) -> Direction2D:
 	return posmod(base + count, 4) as Direction2D
+
+
+static func direction2d_to_vector2i(direction: Direction2D) -> Vector2i:
+	return Vector2i(
+		Global.direction2d_horizontal_to_bipolar(direction),
+		Global.direction2d_vertical_to_bipolar(direction)
+	)
+
+
+static func direction2d_to_vector2(direction: Direction2D) -> Vector2:
+	return Vector2(
+		Global.direction2d_horizontal_to_bipolarf(direction),
+		Global.direction2d_vertical_to_bipolarf(direction)
+	)
 
 
 static func _direction2d_turn_debug() -> bool:

@@ -245,12 +245,8 @@ func move_world_grid(direction: Global.Direction2D) -> void:
 		# start a new movement. otherwise, cancel.
 		if difference > 0.2: return
 	
-	var tile_offset = Vector3(
-		Global.direction2d_horizontal_to_bipolarf(direction),
-		0.0,
-		-Global.direction2d_vertical_to_bipolarf(direction)
-	) * world_grid_scale
-	var tile_position = (center.basis.x * tile_offset.x) + (center.basis.z * tile_offset.z)
+	var tile_offset = Global.direction2d_to_vector2(direction) * world_grid_scale
+	var tile_position = (center.basis.x * tile_offset.x) + (-center.basis.z * tile_offset.y)
 	
 	if !_check_for_ground(tile_offset):
 		if beat_on_move and beat_on_collide: _beat(beat_on_move_changes_bpm)
@@ -344,11 +340,7 @@ func move_mesh_lattice(direction: Global.Direction2D) -> void:
 		# start a new movement. otherwise, cancel.
 		if difference > 0.2: return
 	
-	var direction_vector = Vector3(
-		Global.direction2d_horizontal_to_bipolarf(direction),
-		0.0,
-		Global.direction2d_vertical_to_bipolarf(direction)
-	)
+	var direction_vector = Global.direction2d_to_vector2(direction) * world_grid_scale
 	direction_vector = (center.basis.x * direction_vector.x) + (-center.basis.z * direction_vector.z)
 	var next_lattice_index = lattice_gen.traverse(current_lattice_vertex, direction_vector)
 	
