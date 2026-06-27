@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://b7vhnlbsquqjf"]
+
+[ext_resource type="Script" uid="uid://d2ma88gy8330n" path="res://components/phase_component.gd" id="1_77fv7"]
+[ext_resource type="Script" uid="uid://ch42rvojoh4iq" path="res://entities/candy/candy.gd" id="1_t68x7"]
+[ext_resource type="Shader" uid="uid://dsvtjnsluuxsp" path="res://entities/phase_object/phase_shader_test.gdshader" id="2_u8v54"]
+[ext_resource type="Texture2D" uid="uid://byrdeibyh2esh" path="res://entities/candy/candy_texture.png" id="3_loq20"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ektp4"]
+render_priority = 0
+shader = ExtResource("2_u8v54")
+shader_parameter/albedo_texture = ExtResource("3_loq20")
+shader_parameter/y_billboard = true
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_tjq72"]
+
+[node name="Candy" type="Node3D" unique_id=561238783]
+script = ExtResource("1_t68x7")
+
+[node name="PhaseComponent" type="Node" parent="." unique_id=1600906776]
+script = ExtResource("1_77fv7")
+energy_phases = Array[int]([0, 1, 3, 4])
+
+[node name="Sprite3D" type="Sprite3D" parent="." unique_id=2014936504]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.64, 0)
+material_override = SubResource("ShaderMaterial_ektp4")
+pixel_size = 0.02
+billboard = 2
+texture = ExtResource("3_loq20")
+
+[node name="Area3D" type="Area3D" parent="." unique_id=1350401219]
+unique_name_in_owner = true
+collision_layer = 16
+collision_mask = 12
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=991063661]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_tjq72")

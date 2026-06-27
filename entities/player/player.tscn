@@ -1,7 +1,9 @@
 [gd_scene format=3 uid="uid://hf7tlhu5yxck"]
 
 [ext_resource type="Script" uid="uid://b61xgyq1blshp" path="res://entities/player/player.gd" id="1_4flbx"]
-[ext_resource type="Texture2D" uid="uid://crouecd42krxy" path="res://entities/player/player.png" id="2_onrkg"]
+[ext_resource type="Texture2D" uid="uid://crouecd42krxy" path="res://entities/player/player_texture.png" id="2_onrkg"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ce1tf"]
 
 [node name="Player" type="Node3D" unique_id=1455120242]
 script = ExtResource("1_4flbx")
@@ -29,7 +31,7 @@ hit_back_faces = false
 unique_name_in_owner = true
 
 [node name="Head" type="Node3D" parent="Pivot" unique_id=1357056651]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -0.2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.128, -0.2)
 
 [node name="Camera3D" type="Camera3D" parent="Pivot/Head" unique_id=154479637]
 cull_mask = 1048573
@@ -37,7 +39,16 @@ cull_mask = 1048573
 [node name="Body" type="Node3D" parent="Pivot" unique_id=905989414]
 
 [node name="Sprite3D" type="Sprite3D" parent="Pivot/Body" unique_id=2038189852]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.28, 0)
 layers = 2
-pixel_size = 0.0078
+pixel_size = 0.02
 texture = ExtResource("2_onrkg")
+
+[node name="InteractArea" type="Area3D" parent="Pivot/Body" unique_id=1150365653]
+unique_name_in_owner = true
+collision_layer = 4
+collision_mask = 24
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Pivot/Body/InteractArea" unique_id=1527657689]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_ce1tf")

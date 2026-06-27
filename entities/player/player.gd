@@ -31,7 +31,7 @@ var _is_moving := false
 @onready var _last_complete_move_position := position
 
 # NOTE: this could all be abstracted if necessary, but it's mainly for gameplay testing/prototyping
-var _movement_system := MovementSystem.WorldGrid
+@export var _movement_system := MovementSystem.WorldGrid
 var facing_direction := Global.Direction2D.Up
 var _target_facing_direction := facing_direction
 var _snap_to_lattice := true
@@ -53,6 +53,7 @@ var lattice_gen: MeshLattice3D
 @export var current_lattice_vertex := -1 # invalid by default to ensure it gets set properly for each level
 @export var debug_lattice := true
 
+
 ## turning
 
 @export_category("Turning")
@@ -68,9 +69,18 @@ var _last_complete_turn_yaw
 var _target_rotation
 
 
+## inventory
+
+var candy_count := 0
+
+
 ## node
 
 func _ready() -> void:
+	Global.set_player(self)
+	%InteractArea.area_entered.connect(_on_interact_area_entered)
+	%InteractArea.body_entered.connect(_on_interact_body_entered)
+	
 	# dungeon.quarter_note.connect(_on_quarter_beat)
 	
 	# set default values
@@ -248,7 +258,7 @@ func move_world_grid(direction: Global.Direction2D) -> void:
 	var tile_offset = Global.direction2d_to_vector2(direction) * world_grid_scale
 	var tile_position = (center.basis.x * tile_offset.x) + (-center.basis.z * tile_offset.y)
 	
-	if !_check_for_ground(tile_offset):
+	if !_check_for_ground(Vector3(tile_offset.x, 0.0, -tile_offset.y)):
 		if beat_on_move and beat_on_collide: _beat(beat_on_move_changes_bpm)
 		return
 	
@@ -432,3 +442,27 @@ func turn_left() -> void: turn(Global.Direction1D.Negative)
 
 
 func turn_right() -> void: turn(Global.Direction1D.Positive)
+
+
+## interaction
+
+func _on_interact_area_entered(area: Area3D):
+	#print("area interact")
+	_on_interact_overlap(area.owner)
+
+func _on_interact_body_entered(body: Node3D):
+	#print("body interact")
+	_on_interact_overlap(body.owner)
+
+func _on_interact_overlap(node: Node3D):
+	var interactable = node as BaseInteractable
+	if !interactable: return
+	
+	interactable.interact()
+	
+	var pickup = interactable as BasePickup
+	if !pickup: return
+	
+	if node is Candy:
+		candy_count = candy_count + 1
+		print("candy: ", candy_count)

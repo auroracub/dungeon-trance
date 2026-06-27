@@ -42,6 +42,18 @@ static func _vector3_component_squared_unsafe(a: Vector3, b: Vector3) -> float:
 	return a.dot(b) / b.length_squared()
 
 
+## player
+
+var _player_ref: Player = null
+
+func set_player(player: Player) -> void:
+	_player_ref = player
+
+
+func get_player() -> Player:
+	return _player_ref
+
+
 ## energy
 
 enum EnergyState { Subsonic, Low, Medium, High, Supersonic }

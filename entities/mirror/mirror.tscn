@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://bhh76way1tfnc"]
+
+[ext_resource type="Script" uid="uid://dp6c8jm3s0bqy" path="res://entities/mirror/mirror.gd" id="1_rx8hy"]
+[ext_resource type="Shader" uid="uid://5qctal2p17sw" path="res://entities/mirror/mirror_shader.gdshader" id="2_47wjw"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_ce1tf"]
+size = Vector2(1.28, 2.54)
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_47wjw"]
+viewport_path = NodePath("SubViewport")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_47wjw"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("2_47wjw")
+shader_parameter/viewport_texture = SubResource("ViewportTexture_47wjw")
+
+[node name="Mirror" type="Node3D" unique_id=561238783]
+script = ExtResource("1_rx8hy")
+
+[node name="Quad" type="MeshInstance3D" parent="." unique_id=1779160987]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.27, 0)
+mesh = SubResource("QuadMesh_ce1tf")
+surface_material_override/0 = SubResource("ShaderMaterial_47wjw")
+
+[node name="SubViewport" type="SubViewport" parent="." unique_id=649509937]
+unique_name_in_owner = true
+size = Vector2i(81, 162)
+
+[node name="Camera3D" type="Camera3D" parent="SubViewport" unique_id=935993012]
+unique_name_in_owner = true
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -0.35806513, 3.877717, -3.627183)
+projection = 2
+current = true
+fov = 70.01
+size = 1.28
+frustum_offset = Vector2(-0.35806513, -2.607717)
+near = 3.677183
+far = 54.481613

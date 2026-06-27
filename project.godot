@@ -97,12 +97,11 @@ dodge={
 
 [layer_names]
 
-3d_physics/layer_1="Default"
+3d_physics/layer_1="Blocking (Default)"
 3d_physics/layer_2="Walkable"
-
-[physics]
-
-jolt_physics_3d/queries/enable_ray_cast_face_index=true
+3d_physics/layer_3="Player"
+3d_physics/layer_4="NPC"
+3d_physics/layer_5="Interactable"
 
 [rendering]
 

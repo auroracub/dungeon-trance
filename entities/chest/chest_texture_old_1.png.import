@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://crouecd42krxy"
-path.s3tc="res://.godot/imported/player.png-5e2e7e7552b041428056885c13411183.s3tc.ctex"
+uid="uid://ciqmjaxip0vu"
+path.s3tc="res://.godot/imported/chest_texture_old_1.png-a2d89d7c7767997fb509f72d74cb7f4c.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://entities/player/player.png"
-dest_files=["res://.godot/imported/player.png-5e2e7e7552b041428056885c13411183.s3tc.ctex"]
+source_file="res://entities/chest/chest_texture_old_1.png"
+dest_files=["res://.godot/imported/chest_texture_old_1.png-a2d89d7c7767997fb509f72d74cb7f4c.s3tc.ctex"]
 
 [params]
 
