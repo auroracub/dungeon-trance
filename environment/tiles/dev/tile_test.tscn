@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cifrna5veltfe"]
 
-[ext_resource type="Script" uid="uid://0qr1gw6f80tl" path="res://entities/lattice_node/lattice_node.gd" id="1_14cgl"]
+[ext_resource type="Script" uid="uid://0qr1gw6f80tl" path="res://entities/lattice_node/lattice_node_3d.gd" id="1_14cgl"]
 [ext_resource type="Material" uid="uid://do4xj83xvoag5" path="res://environment/tiles/shaders/tile_material_uv.tres" id="2_hlq0a"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_tjq72"]
