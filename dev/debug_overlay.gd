@@ -110,7 +110,7 @@ func _ready() -> void:
 	
 	# additional setup
 	
-	%MaxStepHeight.max_value = dungeon.tile_size
+	%MaxStepHeight.max_value = player.world_grid_scale
 	
 	# show/hide game options
 	

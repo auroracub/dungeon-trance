@@ -3,6 +3,11 @@ extends Node
 
 ## general
 
+func panic() -> void:
+	get_tree().quit()
+	print("Thread ", OS.get_thread_caller_id(), " panicked due to game-breaking errors")
+
+
 static func bool_to_unipolar(b: bool) -> int:
 	return 1 if b else 0
 

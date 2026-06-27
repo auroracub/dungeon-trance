@@ -31,10 +31,14 @@ var _is_moving := false
 @onready var _last_complete_move_position := position
 
 # NOTE: this could all be abstracted if necessary, but it's mainly for gameplay testing/prototyping
-var _movement_system := MovementSystem.MeshLattice
+var _movement_system := MovementSystem.WorldGrid
 var facing_direction := Global.Direction2D.Up
 var _target_facing_direction := facing_direction
 var _snap_to_lattice := true
+
+# move_world_grid
+
+@export var world_grid_scale := 2.0
 
 # move_node_lattice
 
@@ -46,7 +50,7 @@ var _snap_to_lattice := true
 @export_group("Mesh Lattice")
 @export var lattice_mesh: MeshInstance3D
 var lattice_gen: MeshLattice3D
-@export var current_lattice_vertex := 0
+@export var current_lattice_vertex := -1 # invalid by default to ensure it gets set properly for each level
 @export var debug_lattice := true
 
 ## turning
@@ -77,22 +81,36 @@ func _ready() -> void:
 	_last_complete_turn_yaw = _target_rotation
 	
 	# snap to lattice
-	if _snap_to_lattice:
-		match _movement_system:
-			MovementSystem.NodeLattice:
-				if current_lattice_node:
-					_target_position = current_lattice_node.position
-					_target_basis = current_lattice_node.basis
-				else:
-					push_warning("Player warning: _snap_to_lattice enabled but no initial node selected for current_lattice_node")
-			MovementSystem.MeshLattice:
+
+	match _movement_system:
+		MovementSystem.NodeLattice:
+			if !current_lattice_node:
+				push_error("Player error: NodeLattice movement in use but no initial node selected with current_lattice_node")
+				Global.panic()
+			elif _snap_to_lattice:
+				_target_position = current_lattice_node.position
+				_target_basis = current_lattice_node.basis
+				position = _target_position
+				basis = _target_basis
+				_last_complete_move_position = _target_position
+		MovementSystem.MeshLattice:
+			if !lattice_mesh or !lattice_mesh.mesh:
+				push_error("Player error: MeshLattice movement in use but lattice_mesh is invalid")
+				Global.panic()
+			else:
 				lattice_gen = MeshLattice3D.new(lattice_mesh)
-			_:
-				pass
-		
-		position = _target_position
-		basis = _target_basis
-		_last_complete_move_position = _target_position
+				
+				if current_lattice_vertex < 0:
+					push_error("Player error: MeshLattice movement in use but no initial vertex selected with current_lattice_vertex")
+					Global.panic()
+				elif _snap_to_lattice:
+					_target_position = lattice_gen.vertices[current_lattice_vertex]
+					# Note: set _target_basis here once MeshLattice normals get implemented
+					position = _target_position
+					basis = Basis.IDENTITY
+					_last_complete_move_position = _target_position
+		_:
+			pass
 
 
 func _process(delta: float) -> void:
@@ -143,7 +161,7 @@ func _process(delta: float) -> void:
 		turn_right()
 	
 	# debug
-	if debug_lattice: lattice_gen.draw_debug_labels(delta)
+	if _movement_system == MovementSystem.MeshLattice and lattice_gen and debug_lattice: lattice_gen.draw_debug_labels(delta)
 
 
 ## beat
@@ -209,7 +227,7 @@ func find_tri_midpoint(faces: PackedVector3Array, index: int) -> Vector3:
 	return (point_a + point_b) * 0.5 if angle_ab > angle_ac and angle_ab > angle_cb else (point_a + point_c) * 0.5 if angle_ac > angle_ab and angle_ac > angle_cb else (point_a + point_c) * 0.5
 
 
-func move_world_grid(direction: Global.Direction2D, grid_interval: float = 1.0) -> void:
+func move_world_grid(direction: Global.Direction2D) -> void:
 	if _is_moving:
 		if !allow_skip_move_anim: return
 		
@@ -231,7 +249,7 @@ func move_world_grid(direction: Global.Direction2D, grid_interval: float = 1.0) 
 		Global.direction2d_horizontal_to_bipolarf(direction),
 		0.0,
 		-Global.direction2d_vertical_to_bipolarf(direction)
-	) * grid_interval
+	) * world_grid_scale
 	var tile_position = (center.basis.x * tile_offset.x) + (center.basis.z * tile_offset.z)
 	
 	if !_check_for_ground(tile_offset):
