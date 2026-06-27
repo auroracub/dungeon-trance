@@ -1,11 +1,13 @@
 
-class_name MeshLattice3D extends RefCounted
+@tool class_name MeshLattice3D extends RefCounted
 
 var mesh_instance: MeshInstance3D
 var index_graph: Dictionary = {} # { vertex indices: array of neighbor indices }
 var vertices: PackedVector3Array
 # var normals: PackedVector3Array
 
+@export var draw_debug_text := false
+@export var hide_while_playing := true
 
 func _init(p_mesh_instance: MeshInstance3D) -> void:
 	if p_mesh_instance and p_mesh_instance.mesh:
@@ -92,3 +94,11 @@ func traverse(p_index: int, p_direction: Vector3, p_max_angle: float = 45.0) -> 
 			n_min = n
 	
 	return n_min
+
+
+func draw_debug_labels(duration: float) -> void:
+	if hide_while_playing and !Engine.is_editor_hint(): return
+	
+	if draw_debug_text:
+		for i in range(vertices.size()):
+			DebugDraw3D.draw_text(vertices[i] + mesh_instance.global_position + mesh_instance.global_basis.y * 0.4, str(i), 16, Color.WHITE, duration)

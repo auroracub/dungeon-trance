@@ -9,7 +9,10 @@ class_name Player extends Node3D
 
 ## moving
 
+@export_category("Movement")
+
 enum SideMoveBehavior { StrafeOnDodge, TurnOnDodge, StrafeOnly, StrafeAndTurn, TurnOnly }
+enum MovementSystem { WorldGrid, NodeLattice, MeshLattice }
 
 @export var side_move_behavior := SideMoveBehavior.StrafeOnDodge
 
@@ -20,35 +23,40 @@ var allow_skip_move_anim := true
 var beat_on_move := true
 var beat_on_collide := true
 var beat_on_move_changes_bpm := true
-var beat_sync_move := false
-var _move_queue: Array[Callable] = []
 
 var _move_tween : Tween
 var _is_moving := false
-
 @onready var _target_position := position
 @onready var _target_basis := basis
-
-# move_grid
-
 @onready var _last_complete_move_position := position
 
-# move_lattice
-
-@onready var current_lattice_point := dungeon.lattice_start
-var _snap_to_lattice := true
+# NOTE: this could all be abstracted if necessary, but it's mainly for gameplay testing/prototyping
+var _movement_system := MovementSystem.MeshLattice
 var facing_direction := Global.Direction2D.Up
 var _target_facing_direction := facing_direction
+var _snap_to_lattice := true
 
+# move_node_lattice
+
+@export_group("Node Lattice")
+@export var current_lattice_node: LatticeNode3D
+
+# move_mesh_lattice
+
+@export_group("Mesh Lattice")
+@export var lattice_mesh: MeshInstance3D
+var lattice_gen: MeshLattice3D
+@export var current_lattice_vertex := 0
+@export var debug_lattice := true
 
 ## turning
+
+@export_category("Turning")
 
 @export var turn_speed: float = 7.5 # per angle
 var allow_skip_turn_anim := true
 var beat_on_turn := true
 var beat_on_turn_changes_bpm := false
-var beat_sync_turn := false
-var _turn_queue: Array[Callable] = []
 
 var _turn_tween : Tween
 var _is_turning := false
@@ -59,7 +67,7 @@ var _target_rotation
 ## node
 
 func _ready() -> void:
-	dungeon.quarter_note.connect(_on_quarter_beat)
+	# dungeon.quarter_note.connect(_on_quarter_beat)
 	
 	# set default values
 	pivot.basis = transform.basis
@@ -69,9 +77,19 @@ func _ready() -> void:
 	_last_complete_turn_yaw = _target_rotation
 	
 	# snap to lattice
-	if _snap_to_lattice and dungeon.lattice_start:
-		_target_position = dungeon.lattice_start.position
-		_target_basis = dungeon.lattice_start.basis
+	if _snap_to_lattice:
+		match _movement_system:
+			MovementSystem.NodeLattice:
+				if current_lattice_node:
+					_target_position = current_lattice_node.position
+					_target_basis = current_lattice_node.basis
+				else:
+					push_warning("Player warning: _snap_to_lattice enabled but no initial node selected for current_lattice_node")
+			MovementSystem.MeshLattice:
+				lattice_gen = MeshLattice3D.new(lattice_mesh)
+			_:
+				pass
+		
 		position = _target_position
 		basis = _target_basis
 		_last_complete_move_position = _target_position
@@ -82,7 +100,7 @@ func _process(delta: float) -> void:
 	
 	# handle move input
 	if Input.is_action_just_pressed("move_left"):
-		var move_func := func(): move(Global.Direction2D.Left) # _move_tile_grid(Vector2i(-1, 0))
+		var move_func := func(): move(Global.Direction2D.Left)
 		var turn_func := func(): turn_left()
 		
 		match side_move_behavior:
@@ -98,7 +116,7 @@ func _process(delta: float) -> void:
 			SideMoveBehavior.TurnOnDodge:
 				turn_func.call() if _is_dodge_active else move_func.call()
 	elif Input.is_action_just_pressed("move_right"):
-		var move_func := func(): move(Global.Direction2D.Right) # _move_tile_grid(Vector2i(+1, 0))
+		var move_func := func(): move(Global.Direction2D.Right)
 		var turn_func := func(): turn_right()
 		
 		match side_move_behavior:
@@ -114,25 +132,28 @@ func _process(delta: float) -> void:
 			SideMoveBehavior.TurnOnDodge:
 				turn_func.call() if _is_dodge_active else move_func.call()
 	elif Input.is_action_just_pressed("move_forward"):
-		move(Global.Direction2D.Up) # _move_tile_grid(Vector2i(0, +1))
+		move(Global.Direction2D.Up)
 	elif Input.is_action_just_pressed("move_backward"):
-		move(Global.Direction2D.Down) # _move_tile_grid(Vector2i(0, -1))
+		move(Global.Direction2D.Down)
 	
 	# handle turn input
 	if Input.is_action_just_pressed("look_left"):
 		turn_left()
 	elif Input.is_action_just_pressed("look_right"):
 		turn_right()
+	
+	# debug
+	if debug_lattice: lattice_gen.draw_debug_labels(delta)
 
 
 ## beat
 
-func _on_quarter_beat() -> void:
-	for callable in _move_queue: callable.call()
-	_move_queue.clear()
-	
-	for callable in _turn_queue: callable.call()
-	_turn_queue.clear()
+#func _on_quarter_beat() -> void:
+	#for callable in _move_queue: callable.call()
+	#_move_queue.clear()
+	#
+	#for callable in _turn_queue: callable.call()
+	#_turn_queue.clear()
 
 
 ## player
@@ -188,7 +209,7 @@ func find_tri_midpoint(faces: PackedVector3Array, index: int) -> Vector3:
 	return (point_a + point_b) * 0.5 if angle_ab > angle_ac and angle_ab > angle_cb else (point_a + point_c) * 0.5 if angle_ac > angle_ab and angle_ac > angle_cb else (point_a + point_c) * 0.5
 
 
-func move_grid(direction: Global.Direction2D, grid_interval: float = 1.0) -> void:
+func move_world_grid(direction: Global.Direction2D, grid_interval: float = 1.0) -> void:
 	if _is_moving:
 		if !allow_skip_move_anim: return
 		
@@ -237,7 +258,7 @@ func move_grid(direction: Global.Direction2D, grid_interval: float = 1.0) -> voi
 	_is_moving = false
 
 
-func move_lattice(direction: Global.Direction2D) -> void:
+func move_node_lattice(direction: Global.Direction2D) -> void:
 	if _is_moving:
 		if !allow_skip_move_anim: return
 		
@@ -256,19 +277,74 @@ func move_lattice(direction: Global.Direction2D) -> void:
 		# start a new movement. otherwise, cancel.
 		if difference > 0.2: return
 	
-	var next_lattice_point = current_lattice_point.get_neighbor(Global.direction2d_turn(direction, facing_direction))
+	var next_lattice_node = current_lattice_node.get_neighbor(Global.direction2d_turn(direction, facing_direction))
 	
-	if next_lattice_point == null:
+	if next_lattice_node == null:
 		if beat_on_move and beat_on_collide: _beat(beat_on_move_changes_bpm)
 		return
 	
 	_is_moving = true
 	
 	var original_position = position
-	_target_position = next_lattice_point.position
-	_target_basis = next_lattice_point.basis
+	_target_position = next_lattice_node.position
+	_target_basis = next_lattice_node.basis
 	
-	current_lattice_point = next_lattice_point
+	current_lattice_node = next_lattice_node
+	
+	if _move_tween: _move_tween.kill()
+	_move_tween = create_tween()
+	_move_tween.set_ease(Tween.EASE_OUT).tween_method(func(alpha):
+		position = lerp(original_position, _target_position, alpha)
+		basis = basis.slerp(_target_basis, alpha),
+		0.0, 1.0, original_position.distance_to(_target_position) / move_speed)
+	
+	await _move_tween.finished
+	
+	if beat_on_move: _beat(beat_on_move_changes_bpm)
+	
+	# complete move
+	_last_complete_move_position = _target_position
+	_is_moving = false
+
+
+func move_mesh_lattice(direction: Global.Direction2D) -> void:
+	if _is_moving:
+		if !allow_skip_move_anim: return
+		
+		var difference = position.distance_to(_target_position)
+		
+		# complete movement instantly
+		_move_tween.kill()
+		position = _target_position
+		basis = _target_basis
+		_last_complete_move_position = _target_position
+		_is_moving = false
+		
+		if beat_on_move: _beat(beat_on_move_changes_bpm)
+		
+		# if the movement was nearly complete (based on this threshold) and skips are allowed,
+		# start a new movement. otherwise, cancel.
+		if difference > 0.2: return
+	
+	var direction_vector = Vector3(
+		Global.direction2d_horizontal_to_bipolarf(direction),
+		0.0,
+		Global.direction2d_vertical_to_bipolarf(direction)
+	)
+	direction_vector = (center.basis.x * direction_vector.x) + (-center.basis.z * direction_vector.z)
+	var next_lattice_index = lattice_gen.traverse(current_lattice_vertex, direction_vector)
+	
+	if next_lattice_index < 0:
+		if beat_on_move and beat_on_collide: _beat(beat_on_move_changes_bpm)
+		return
+	
+	_is_moving = true
+	
+	var original_position = position
+	_target_position = lattice_gen.vertices[next_lattice_index]
+	_target_basis = Basis.IDENTITY # Note: construct from normals
+	
+	current_lattice_vertex = next_lattice_index
 	
 	if _move_tween: _move_tween.kill()
 	_move_tween = create_tween()
@@ -287,10 +363,13 @@ func move_lattice(direction: Global.Direction2D) -> void:
 
 
 func move(direction: Global.Direction2D) -> void:
-	# # basic version
-	# position += (transform.basis.x * direction.x) + (-transform.basis.z * direction.y)
-	move_grid(direction, dungeon.tile_size)
-	# move_lattice(direction)
+	match _movement_system:
+		MovementSystem.WorldGrid:
+			move_world_grid(direction)
+		MovementSystem.NodeLattice:
+			move_node_lattice(direction)
+		MovementSystem.MeshLattice:
+			move_mesh_lattice(direction)
 
 
 # Negative == Left, Positive == Right
