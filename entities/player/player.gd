@@ -30,10 +30,13 @@ var _is_moving := false
 @onready var _target_basis := basis
 
 # move_grid
+
 @onready var _last_complete_move_position := position
 
 # move_lattice
-@onready var current_lattice_point := %LatticeNode1
+
+@onready var current_lattice_point := dungeon.lattice_start
+var _snap_to_lattice := true
 var facing_direction := Global.Direction2D.Up
 var _target_facing_direction := facing_direction
 
@@ -64,6 +67,14 @@ func _ready() -> void:
 	basis = Basis.IDENTITY
 	_target_rotation = pivot.rotation.y
 	_last_complete_turn_yaw = _target_rotation
+	
+	# snap to lattice
+	if _snap_to_lattice and dungeon.lattice_start:
+		_target_position = dungeon.lattice_start.position
+		_target_basis = dungeon.lattice_start.basis
+		position = _target_position
+		basis = _target_basis
+		_last_complete_move_position = _target_position
 
 
 func _process(delta: float) -> void:
@@ -141,17 +152,17 @@ func _check_for_ground(relative_position: Vector3) -> bool:
 	%GroundRayCast.force_raycast_update()
 	
 	if %WallRayCast.is_colliding():
-		print("hit wall")
 		# wall hit
+		# print("hit wall")
 		return false
 	else:
 		if %GroundRayCast.is_colliding() and %GroundRayCast.get_collision_normal().angle_to(basis.y) <= _max_floor_angle:
-			print("hit ground")
 			# ground hit
+			# print("hit ground")
 			return true
 		else:
-			print("hit nothing")
 			# no hit
+			# print("hit nothing")
 			return false
 
 
@@ -236,6 +247,7 @@ func move_lattice(direction: Global.Direction2D) -> void:
 		_move_tween.kill()
 		position = _target_position
 		basis = _target_basis
+		_last_complete_move_position = _target_position
 		_is_moving = false
 		
 		if beat_on_move: _beat(beat_on_move_changes_bpm)
@@ -270,6 +282,7 @@ func move_lattice(direction: Global.Direction2D) -> void:
 	if beat_on_move: _beat(beat_on_move_changes_bpm)
 	
 	# complete move
+	_last_complete_move_position = _target_position
 	_is_moving = false
 
 

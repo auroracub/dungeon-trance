@@ -1,15 +1,15 @@
 
-@tool class_name LatticeNode extends Marker3D
+@tool class_name LatticeNode3D extends Marker3D
 
-@export var left_neighbor: LatticeNode = null
-@export var front_neighbor: LatticeNode = null
-@export var right_neighbor: LatticeNode = null
-@export var back_neighbor: LatticeNode = null
+@export var left_neighbor: LatticeNode3D = null
+@export var front_neighbor: LatticeNode3D = null
+@export var right_neighbor: LatticeNode3D = null
+@export var back_neighbor: LatticeNode3D = null
 @export var draw_debug_text := true
 @export var draw_debug_arrows := true
 @export var hide_while_playing := true
 
-func get_neighbor(direction: Global.Direction2D) -> LatticeNode:
+func get_neighbor(direction: Global.Direction2D) -> LatticeNode3D:
 	match direction:
 		Global.Direction2D.Left:
 			return left_neighbor
@@ -23,7 +23,7 @@ func get_neighbor(direction: Global.Direction2D) -> LatticeNode:
 			return null
 
 
-func get_neighbors() -> Dictionary[Global.Direction2D, LatticeNode]:
+func get_neighbors() -> Dictionary[Global.Direction2D, LatticeNode3D]:
 	return {
 		Global.Direction2D.Left: left_neighbor,
 		Global.Direction2D.Up: front_neighbor,

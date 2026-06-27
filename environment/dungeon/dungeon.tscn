@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bj8jw1sydlbif" path="res://environment/dungeon/dungeon.gd" id="1_8retf"]
 [ext_resource type="Material" uid="uid://do4xj83xvoag5" path="res://environment/tiles/shaders/tile_material_uv.tres" id="2_q1o2u"]
 [ext_resource type="Material" uid="uid://k3ae0xoylusf" path="res://environment/tiles/shaders/tile_material.tres" id="2_tnydx"]
-[ext_resource type="Script" uid="uid://0qr1gw6f80tl" path="res://entities/lattice_node/lattice_node.gd" id="3_8retf"]
+[ext_resource type="Script" uid="uid://0qr1gw6f80tl" path="res://entities/lattice_node/lattice_node_3d.gd" id="3_8retf"]
 [ext_resource type="Shader" uid="uid://bea0mefrcvh1p" path="res://environment/tiles/shaders/tile_shader.gdshader" id="3_or8tq"]
 [ext_resource type="Texture2D" uid="uid://rhsusccidolj" path="res://environment/entities/tile_texture.png" id="4_lyguo"]
 [ext_resource type="PackedScene" uid="uid://hf7tlhu5yxck" path="res://entities/player/player.tscn" id="4_tnydx"]
@@ -91,8 +91,9 @@ glow_enabled = true
 glow_intensity = 1.5
 glow_bloom = 0.5
 
-[node name="DungeonScene" type="Node3D" unique_id=1156125841]
+[node name="DungeonScene" type="Node3D" unique_id=1156125841 node_paths=PackedStringArray("lattice_start")]
 script = ExtResource("1_8retf")
+lattice_start = NodePath("Rooms/CurvedLattice (Disabled)/Lattice/LatticeNode1")
 
 [node name="Rooms" type="Node3D" parent="." unique_id=1955545466]
 

@@ -19,6 +19,24 @@ static func bool_to_bipolarf(b: bool) -> float:
 	return 1.0 if b else -1.0
 
 
+static func vector3_component(a: Vector3, b: Vector3) -> float:
+	var l = b.length()
+	return a.dot(b) / l if l > 0.0 else 0.0
+
+
+static func _vector3_component_unsafe(a: Vector3, b: Vector3) -> float:
+	return a.dot(b) / b.length()
+
+
+static func vector3_component_squared(a: Vector3, b: Vector3) -> float:
+	var l = b.length_squared()
+	return a.dot(b) / l if l > 0.0 else 0.0
+
+
+static func _vector3_component_squared_unsafe(a: Vector3, b: Vector3) -> float:
+	return a.dot(b) / b.length_squared()
+
+
 ## energy
 
 enum EnergyState { Subsonic, Low, Medium, High, Supersonic }
