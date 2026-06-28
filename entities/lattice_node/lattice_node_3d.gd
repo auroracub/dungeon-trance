@@ -1,24 +1,26 @@
 
 @tool class_name LatticeNode3D extends Marker3D
 
+@export var default_spacing: float = 1.0
+
 @export_group("Left Node")
 @export var left_neighbor: LatticeNode3D = null
-@export_tool_button("Extrude Left") var extrude_left = func(): extrude(Global.Direction2D.Left)
+@export_tool_button("Extrude Left") var extrude_left = func(): extrude(GlobalStatic.Direction2D.Left, default_spacing)
 @export_tool_button("Focus Left") var focus_left = func(): EditorInterface.call_deferred("edit_node", left_neighbor)
 
 @export_group("Front Node")
 @export var front_neighbor: LatticeNode3D = null
-@export_tool_button("Extrude Front") var extrude_front = func(): extrude(Global.Direction2D.Up)
+@export_tool_button("Extrude Front") var extrude_front = func(): extrude(GlobalStatic.Direction2D.Up, default_spacing)
 @export_tool_button("Focus Front") var focus_front = func(): EditorInterface.call_deferred("edit_node", front_neighbor)
 
 @export_group("Right Node")
 @export var right_neighbor: LatticeNode3D = null
-@export_tool_button("Extrude Right") var extrude_right = func(): extrude(Global.Direction2D.Right)
+@export_tool_button("Extrude Right") var extrude_right = func(): extrude(GlobalStatic.Direction2D.Right, default_spacing)
 @export_tool_button("Focus Right") var focus_right = func(): EditorInterface.call_deferred("edit_node", right_neighbor)
 
 @export_group("Back Node")
 @export var back_neighbor: LatticeNode3D = null
-@export_tool_button("Extrude Back") var extrude_back = func(): extrude(Global.Direction2D.Down)
+@export_tool_button("Extrude Back") var extrude_back = func(): extrude(GlobalStatic.Direction2D.Down, default_spacing)
 @export_tool_button("Focus Back") var focus_back = func(): EditorInterface.call_deferred("edit_node", back_neighbor)
 
 @export_category("Debug")
@@ -27,33 +29,38 @@
 @export var hide_while_playing := true
 
 
-func get_neighbor(direction: Global.Direction2D) -> LatticeNode3D:
+func _exit_tree() -> void:
+	remove_from_neighbors()
+	reset()
+
+
+func get_neighbor(direction: GlobalStatic.Direction2D) -> LatticeNode3D:
 	match direction:
-		Global.Direction2D.Left:
+		GlobalStatic.Direction2D.Left:
 			return left_neighbor
-		Global.Direction2D.Up:
+		GlobalStatic.Direction2D.Up:
 			return front_neighbor
-		Global.Direction2D.Right:
+		GlobalStatic.Direction2D.Right:
 			return right_neighbor
-		Global.Direction2D.Down:
+		GlobalStatic.Direction2D.Down:
 			return back_neighbor
 		_:
 			return null
 
 
-func set_neighbor(direction: Global.Direction2D, node: LatticeNode3D, force: bool = true) -> bool:
+func set_neighbor(direction: GlobalStatic.Direction2D, node: LatticeNode3D, force: bool = true) -> bool:
 	match direction:
-		Global.Direction2D.Left:
-			if force and left_neighbor: return false
+		GlobalStatic.Direction2D.Left:
+			if !force and left_neighbor: return false
 			left_neighbor = node
-		Global.Direction2D.Up:
-			if force and front_neighbor: return false
+		GlobalStatic.Direction2D.Up:
+			if !force and front_neighbor: return false
 			front_neighbor = node
-		Global.Direction2D.Right:
-			if force and right_neighbor: return false
+		GlobalStatic.Direction2D.Right:
+			if !force and right_neighbor: return false
 			right_neighbor = node
-		Global.Direction2D.Down:
-			if force and back_neighbor: return false
+		GlobalStatic.Direction2D.Down:
+			if !force and back_neighbor: return false
 			back_neighbor = node
 		_:
 			return false
@@ -61,16 +68,16 @@ func set_neighbor(direction: Global.Direction2D, node: LatticeNode3D, force: boo
 	return true
 
 
-func remove_neighbor(direction: Global.Direction2D) -> void:
+func remove_neighbor(direction: GlobalStatic.Direction2D) -> void:
 	set_neighbor(direction, null, true)
 
 
-func get_neighbors_dict() -> Dictionary[Global.Direction2D, LatticeNode3D]:
+func get_neighbors_dict() -> Dictionary[GlobalStatic.Direction2D, LatticeNode3D]:
 	return {
-		Global.Direction2D.Left: left_neighbor,
-		Global.Direction2D.Up: front_neighbor,
-		Global.Direction2D.Right: right_neighbor,
-		Global.Direction2D.Down: back_neighbor
+		GlobalStatic.Direction2D.Left: left_neighbor,
+		GlobalStatic.Direction2D.Up: front_neighbor,
+		GlobalStatic.Direction2D.Right: right_neighbor,
+		GlobalStatic.Direction2D.Down: back_neighbor
 	}
 
 
@@ -85,7 +92,7 @@ func get_neighbors_list() -> Array[LatticeNode3D]:
 
 func _get_neighbors_debug() -> void:
 	var n = get_neighbors_dict()
-	for k in n: print(Global.direction2d_to_string(k), ": ", n[k])
+	for k in n: print(GlobalStatic.direction2d_to_string(k), ": ", n[k])
 
 
 func _process(delta: float) -> void:
@@ -99,11 +106,12 @@ func _process(delta: float) -> void:
 		if back_neighbor: DebugDraw3D.draw_arrow(global_position, back_neighbor.global_position, Color.BLUE, 0.1, true, delta)
 
 
-func delete() -> void:
+func remove_from_neighbors() -> void:
 	for i in get_neighbors_list():
+		if !i: continue
 		var n = i.get_neighbors_dict()
-		for j in n.keys(): if n[j] == self: i.remove_neighbor(j)
-	queue_free()
+		for j in n.keys():
+			if n[j] and n[j] == self: i.remove_neighbor(j)
 
 
 func reset() -> void:
@@ -113,13 +121,20 @@ func reset() -> void:
 	back_neighbor = null
 
 
-func extrude(direction: Global.Direction2D, distance: float = 1.0) -> bool:
+func extrude(direction: GlobalStatic.Direction2D, distance: float = 1.0) -> bool:
 	var n = get_neighbor(direction)
 	if n: return false
 	
 	var sibling = LatticeNode3D.new()
-	sibling.set_neighbor(Global.direction2d_invert(direction), self)
-	add_sibling(sibling)
-	sibling.global_position
+	sibling.set_neighbor(GlobalStatic.direction2d_invert(direction), self)
+	if is_instance_valid(sibling):
+		add_sibling(sibling)
+		sibling.owner = owner # get_tree().edited_scene_root if Engine.is_editor_hint() else get_tree().root
+		sibling.name = name
+		set_neighbor(direction, sibling)
+		var offset = GlobalStatic.direction2d_to_vector2i(direction) * distance
+		sibling.global_position = Vector3(offset.x, 0.0, offset.y)
+	else:
+		push_warning("Warning: unable to create sibling, is_instance_valid returned false")
 	
 	return true

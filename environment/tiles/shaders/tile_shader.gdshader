@@ -13,5 +13,5 @@ void fragment() {
 	
 	pos /= tile_size;
 	
-	ALBEDO = texture(tile_mask_texture, fract(pos.xz + 0.5 + offset)).rgb;
+	ALBEDO = 1.0 - texture(tile_mask_texture, fract(pos.xz + 0.5 + offset)).rgb;
 }

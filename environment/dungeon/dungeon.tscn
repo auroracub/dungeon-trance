@@ -1,4 +1,4 @@
-[gd_scene format=4 uid="uid://bomiii7utp1kk"]
+[gd_scene format=4 uid="uid://chs7sum1we703"]
 
 [ext_resource type="Script" uid="uid://bj8jw1sydlbif" path="res://environment/dungeon/dungeon.gd" id="1_8retf"]
 [ext_resource type="Material" uid="uid://do4xj83xvoag5" path="res://environment/tiles/shaders/tile_material_uv.tres" id="2_q1o2u"]

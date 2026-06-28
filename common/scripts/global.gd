@@ -1,5 +1,5 @@
 
-extends Node
+class_name GlobalStatic extends Node
 
 ## general
 
@@ -66,41 +66,41 @@ enum Direction1D { Positive, Negative }
 
 static func direction1d_invert(direction: Direction1D) -> Direction1D:
 	match direction:
-		Direction1D.Positive: return Direction1D.Negative
-		Direction1D.Negative: return Direction1D.Positive
-		_: return Direction1D.Negative
+		GlobalStatic.Direction1D.Positive: return GlobalStatic.Direction1D.Negative
+		GlobalStatic.Direction1D.Negative: return GlobalStatic.Direction1D.Positive
+		_: return GlobalStatic.Direction1D.Negative
 
 
 static func direction1d_to_bool(direction: Direction1D) -> bool:
-	return direction == Direction1D.Positive
+	return direction == GlobalStatic.Direction1D.Positive
 
 
-static func direction1d_to_bipolar(direction: Direction1D) -> int:
-	return bool_to_bipolar(direction1d_to_bool(direction))
+static func direction1d_to_bipolar(direction: GlobalStatic.Direction1D) -> int:
+	return GlobalStatic.bool_to_bipolar(GlobalStatic.direction1d_to_bool(direction))
 
 
-static func direction1d_to_bipolarf(direction: Direction1D) -> float:
-	return bool_to_bipolarf(direction1d_to_bool(direction))
+static func direction1d_to_bipolarf(direction: GlobalStatic.Direction1D) -> float:
+	return GlobalStatic.bool_to_bipolarf(GlobalStatic.direction1d_to_bool(direction))
 
 
-static func direction1d_to_unipolar(direction: Direction1D) -> int:
-	return bool_to_unipolar(direction1d_to_bool(direction))
+static func direction1d_to_unipolar(direction: GlobalStatic.Direction1D) -> int:
+	return GlobalStatic.bool_to_unipolar(GlobalStatic.direction1d_to_bool(direction))
 
 
-static func direction1d_to_unipolarf(direction: Direction1D) -> float:
-	return bool_to_unipolarf(direction1d_to_bool(direction))
+static func direction1d_to_unipolarf(direction: GlobalStatic.Direction1D) -> float:
+	return GlobalStatic.bool_to_unipolarf(GlobalStatic.direction1d_to_bool(direction))
 
 
-static func direction1d_to_string(direction: Direction1D) -> String:
-	return Direction1D.keys()[direction]
+static func direction1d_to_string(direction: GlobalStatic.Direction1D) -> String:
+	return GlobalStatic.Direction1D.keys()[direction]
 
 
-static func direction1d_to_vertical2d(direction: Direction1D) -> Direction2D:
-	return Direction2D.Up if direction1d_to_bool(direction) else Direction2D.Down
+static func direction1d_to_vertical2d(direction: GlobalStatic.Direction1D) -> Direction2D:
+	return GlobalStatic.Direction2D.Up if GlobalStatic.direction1d_to_bool(direction) else GlobalStatic.Direction2D.Down
 
 
 static func direction1d_to_horizontal2d(direction: Direction1D) -> Direction2D:
-	return Direction2D.Left if direction1d_to_bool(direction) else Direction2D.Right
+	return GlobalStatic.Direction2D.Left if GlobalStatic.direction1d_to_bool(direction) else GlobalStatic.Direction2D.Right
 
 
 ## direction 2d
@@ -108,58 +108,58 @@ static func direction1d_to_horizontal2d(direction: Direction1D) -> Direction2D:
 enum Direction2D { Up, Right, Down, Left }
 
 
-static func direction2d_invert(direction: Direction2D) -> Direction2D:
+static func direction2d_invert(direction: GlobalStatic.Direction2D) -> Direction2D:
 	match direction:
-		Direction2D.Up: return Direction2D.Down
-		Direction2D.Right: return Direction2D.Left
-		Direction2D.Down: return Direction2D.Up
-		Direction2D.Left: return Direction2D.Right
-		_: return Direction2D.Down
+		GlobalStatic.Direction2D.Up: return GlobalStatic.Direction2D.Down
+		GlobalStatic.Direction2D.Right: return GlobalStatic.Direction2D.Left
+		GlobalStatic.Direction2D.Down: return GlobalStatic.Direction2D.Up
+		GlobalStatic.Direction2D.Left: return GlobalStatic.Direction2D.Right
+		_: return GlobalStatic.Direction2D.Down
 
 
-static func direction2d_is_vertical(direction: Direction2D) -> bool:
-	return direction == Direction2D.Up or direction == Direction2D.Down
+static func direction2d_is_vertical(direction: GlobalStatic.Direction2D) -> bool:
+	return direction == GlobalStatic.Direction2D.Up or direction == GlobalStatic.Direction2D.Down
 
 
-static func direction2d_is_horizontal(direction: Direction2D) -> bool:
-	return direction == Direction2D.Left or direction == Direction2D.Right
+static func direction2d_is_horizontal(direction: GlobalStatic.Direction2D) -> bool:
+	return direction == GlobalStatic.Direction2D.Left or direction == GlobalStatic.Direction2D.Right
 
 
-static func direction2d_vertical_to_bipolar(direction: Direction2D) -> int:
-	return 1 if direction == Direction2D.Up else -1 if direction == Direction2D.Down else 0
+static func direction2d_vertical_to_bipolar(direction: GlobalStatic.Direction2D) -> int:
+	return 1 if direction == GlobalStatic.Direction2D.Up else -1 if direction == GlobalStatic.Direction2D.Down else 0
 
 
-static func direction2d_vertical_to_bipolarf(direction: Direction2D) -> float:
-	return 1.0 if direction == Direction2D.Up else -1.0 if direction == Direction2D.Down else 0.0
+static func direction2d_vertical_to_bipolarf(direction: GlobalStatic.Direction2D) -> float:
+	return 1.0 if direction == GlobalStatic.Direction2D.Up else -1.0 if direction == GlobalStatic.Direction2D.Down else 0.0
 
 
-static func direction2d_horizontal_to_bipolar(direction: Direction2D) -> int:
-	return 1 if direction == Direction2D.Right else -1 if direction == Direction2D.Left else 0
+static func direction2d_horizontal_to_bipolar(direction: GlobalStatic.Direction2D) -> int:
+	return 1 if direction == GlobalStatic.Direction2D.Right else -1 if direction == GlobalStatic.Direction2D.Left else 0
 
 
-static func direction2d_horizontal_to_bipolarf(direction: Direction2D) -> float:
-	return 1.0 if direction == Direction2D.Right else -1.0 if direction == Direction2D.Left else 0.0
+static func direction2d_horizontal_to_bipolarf(direction: GlobalStatic.Direction2D) -> float:
+	return 1.0 if direction == GlobalStatic.Direction2D.Right else -1.0 if direction == GlobalStatic.Direction2D.Left else 0.0
 
 
 static func direction2d_to_string(direction: Direction2D) -> String:
-	return Direction2D.keys()[direction]
+	return GlobalStatic.Direction2D.keys()[direction]
 
 
-static func direction2d_turn(base: Direction2D, count: int) -> Direction2D:
-	return posmod(base + count, 4) as Direction2D
+static func direction2d_turn(base: GlobalStatic.Direction2D, count: int) -> Direction2D:
+	return posmod(base + count, 4) as GlobalStatic.Direction2D
 
 
-static func direction2d_to_vector2i(direction: Direction2D) -> Vector2i:
+static func direction2d_to_vector2i(direction: GlobalStatic.Direction2D) -> Vector2i:
 	return Vector2i(
-		Global.direction2d_horizontal_to_bipolar(direction),
-		Global.direction2d_vertical_to_bipolar(direction)
+		GlobalStatic.direction2d_horizontal_to_bipolar(direction),
+		GlobalStatic.direction2d_vertical_to_bipolar(direction)
 	)
 
 
-static func direction2d_to_vector2(direction: Direction2D) -> Vector2:
+static func direction2d_to_vector2(direction: GlobalStatic.Direction2D) -> Vector2:
 	return Vector2(
-		Global.direction2d_horizontal_to_bipolarf(direction),
-		Global.direction2d_vertical_to_bipolarf(direction)
+		GlobalStatic.direction2d_horizontal_to_bipolarf(direction),
+		GlobalStatic.direction2d_vertical_to_bipolarf(direction)
 	)
 
 

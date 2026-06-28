@@ -8,7 +8,7 @@ void vertex() {
 }
 
 void fragment() {
-	vec4 mirror = texture(viewport_texture, UV);
+	vec4 mirror = 1.0 - texture(viewport_texture, UV);
 	ALBEDO = mirror.rgb;
 	ALPHA = mirror.a;
 }

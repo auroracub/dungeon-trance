@@ -12,14 +12,14 @@ class_name Player extends Node3D
 @export_category("Movement")
 
 enum SideMoveBehavior { StrafeOnDodge, TurnOnDodge, StrafeOnly, StrafeAndTurn, TurnOnly }
-enum MovementSystem { WorldGrid, NodeLattice, MeshLattice }
+enum MovementSystem { WorldGrid, NodeLattice }
 
 @export var side_move_behavior := SideMoveBehavior.StrafeOnDodge
 
 @export var move_speed: float = 7.5 # per tile
 var _max_step_height := 0.25
 var _max_floor_angle := 20.0
-var allow_skip_move_anim := true
+var allow_skip_move_anim := false
 var beat_on_move := true
 var beat_on_collide := true
 var beat_on_move_changes_bpm := true
@@ -45,21 +45,13 @@ var _snap_to_lattice := true
 @export_group("Node Lattice")
 @export var current_lattice_node: LatticeNode3D
 
-# move_mesh_lattice
-
-@export_group("Mesh Lattice")
-@export var lattice_mesh: MeshInstance3D
-var lattice_gen: MeshLattice3D
-@export var current_lattice_vertex := -1 # invalid by default to ensure it gets set properly for each level
-@export var debug_lattice := true
-
 
 ## turning
 
 @export_category("Turning")
 
 @export var turn_speed: float = 7.5 # per angle
-var allow_skip_turn_anim := true
+var allow_skip_turn_anim := false
 var beat_on_turn := true
 var beat_on_turn_changes_bpm := false
 
@@ -67,11 +59,6 @@ var _turn_tween : Tween
 var _is_turning := false
 var _last_complete_turn_yaw
 var _target_rotation
-
-
-## inventory
-
-var candy_count := 0
 
 
 ## node
@@ -103,22 +90,6 @@ func _ready() -> void:
 				position = _target_position
 				basis = _target_basis
 				_last_complete_move_position = _target_position
-		MovementSystem.MeshLattice:
-			if !lattice_mesh or !lattice_mesh.mesh:
-				push_error("Player error: MeshLattice movement in use but lattice_mesh is invalid")
-				Global.panic()
-			else:
-				lattice_gen = MeshLattice3D.new(lattice_mesh)
-				
-				if current_lattice_vertex < 0:
-					push_error("Player error: MeshLattice movement in use but no initial vertex selected with current_lattice_vertex")
-					Global.panic()
-				elif _snap_to_lattice:
-					_target_position = lattice_gen.vertices[current_lattice_vertex]
-					# Note: set _target_basis here once MeshLattice normals get implemented
-					position = _target_position
-					basis = Basis.IDENTITY
-					_last_complete_move_position = _target_position
 		_:
 			pass
 
@@ -169,19 +140,6 @@ func _process(delta: float) -> void:
 		turn_left()
 	elif Input.is_action_just_pressed("look_right"):
 		turn_right()
-	
-	# debug
-	if _movement_system == MovementSystem.MeshLattice and lattice_gen and debug_lattice: lattice_gen.draw_debug_labels(delta)
-
-
-## beat
-
-#func _on_quarter_beat() -> void:
-	#for callable in _move_queue: callable.call()
-	#_move_queue.clear()
-	#
-	#for callable in _turn_queue: callable.call()
-	#_turn_queue.clear()
 
 
 ## player
@@ -331,65 +289,12 @@ func move_node_lattice(direction: Global.Direction2D) -> void:
 	_is_moving = false
 
 
-func move_mesh_lattice(direction: Global.Direction2D) -> void:
-	if _is_moving:
-		if !allow_skip_move_anim: return
-		
-		var difference = position.distance_to(_target_position)
-		
-		# complete movement instantly
-		_move_tween.kill()
-		position = _target_position
-		basis = _target_basis
-		_last_complete_move_position = _target_position
-		_is_moving = false
-		
-		if beat_on_move: _beat(beat_on_move_changes_bpm)
-		
-		# if the movement was nearly complete (based on this threshold) and skips are allowed,
-		# start a new movement. otherwise, cancel.
-		if difference > 0.2: return
-	
-	var direction_vector = Global.direction2d_to_vector2(direction) * world_grid_scale
-	direction_vector = (center.basis.x * direction_vector.x) + (-center.basis.z * direction_vector.z)
-	var next_lattice_index = lattice_gen.traverse(current_lattice_vertex, direction_vector)
-	
-	if next_lattice_index < 0:
-		if beat_on_move and beat_on_collide: _beat(beat_on_move_changes_bpm)
-		return
-	
-	_is_moving = true
-	
-	var original_position = position
-	_target_position = lattice_gen.vertices[next_lattice_index]
-	_target_basis = Basis.IDENTITY # Note: construct from normals
-	
-	current_lattice_vertex = next_lattice_index
-	
-	if _move_tween: _move_tween.kill()
-	_move_tween = create_tween()
-	_move_tween.set_ease(Tween.EASE_OUT).tween_method(func(alpha):
-		position = lerp(original_position, _target_position, alpha)
-		basis = basis.slerp(_target_basis, alpha),
-		0.0, 1.0, original_position.distance_to(_target_position) / move_speed)
-	
-	await _move_tween.finished
-	
-	if beat_on_move: _beat(beat_on_move_changes_bpm)
-	
-	# complete move
-	_last_complete_move_position = _target_position
-	_is_moving = false
-
-
 func move(direction: Global.Direction2D) -> void:
 	match _movement_system:
 		MovementSystem.WorldGrid:
 			move_world_grid(direction)
 		MovementSystem.NodeLattice:
 			move_node_lattice(direction)
-		MovementSystem.MeshLattice:
-			move_mesh_lattice(direction)
 
 
 # Negative == Left, Positive == Right
@@ -450,9 +355,11 @@ func _on_interact_area_entered(area: Area3D):
 	#print("area interact")
 	_on_interact_overlap(area.owner)
 
+
 func _on_interact_body_entered(body: Node3D):
 	#print("body interact")
 	_on_interact_overlap(body.owner)
+
 
 func _on_interact_overlap(node: Node3D):
 	var interactable = node as BaseInteractable
@@ -464,5 +371,4 @@ func _on_interact_overlap(node: Node3D):
 	if !pickup: return
 	
 	if node is Candy:
-		candy_count = candy_count + 1
-		print("candy: ", candy_count)
+		print("yum")
