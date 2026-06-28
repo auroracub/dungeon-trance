@@ -11,6 +11,7 @@ var _max_bpm := 400.0
 var _beat_adjust_timer := 0.0
 var _beat_play_timer := 0.0
 var _beat_count := 1 # counted from 1
+var auto_update := true
 
 signal whole_note
 signal half_note
@@ -42,6 +43,7 @@ signal energy_state_changed(old_state: Global.EnergyState, new_state: Global.Ene
 
 @onready var energy_center = calculate_energy_center(energy_state)
 
+
 ## node
 
 func _ready() -> void:
@@ -68,6 +70,8 @@ func _process(delta: float) -> void:
 		play_beat = true
 	
 	if play_beat:
+		if auto_update and _beat_adjust_timer >= 60.0 / bpm: beat_inactive() # keep updating beat
+		
 		var beat_value = int(note_value)
 		var measure_count = 4
 		var beat_number = _beat_count % beat_value
@@ -111,6 +115,16 @@ func _process(delta: float) -> void:
 
 ## game
 
+func beat_inactive() -> void:
+	var new_bpm = clampf(60.0 / maxf(0.01, _beat_adjust_timer), _min_bpm, _max_bpm)
+	energy_center = calculate_energy_center(energy_state)
+	bpm = lerpf(
+		new_bpm,
+		energy_center,
+		clampf(1.0 / pow(abs(energy_center - new_bpm), 2.0), 0.0, 0.9)
+	)
+
+
 func beat(change_bpm: bool = true) -> void:
 	if change_bpm:
 		var new_bpm = clampf(60.0 / maxf(0.01, _beat_adjust_timer), _min_bpm, _max_bpm)
@@ -137,6 +151,7 @@ func _update_energy_state() -> void:
 		Global.EnergyState.Supersonic
 	)
 
+
 func set_energy_state(new_state: Global.EnergyState) -> void:
 	if new_state != energy_state:
 		energy_state_changed.emit(energy_state, new_state)
@@ -144,6 +159,7 @@ func set_energy_state(new_state: Global.EnergyState) -> void:
 		
 		RenderingServer.global_shader_parameter_set("energy_level", float(energy_state))
 		RenderingServer.global_shader_parameter_set("energy_alpha", float(energy_state) / float(Global.EnergyState.keys().size()))
+
 
 func calculate_energy_center(state) -> float:
 	match state:
